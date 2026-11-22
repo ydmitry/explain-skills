@@ -1,0 +1,8 @@
+{
+  "name": "explain-skills",
+  "owner": { "name": "Dmytro Yaremenko" },
+  "description": "Skills that explain a session or a source to a person who reads alone.",
+  "plugins": [
+    { "name": "explain", "source": "./" }
+  ]
+}
