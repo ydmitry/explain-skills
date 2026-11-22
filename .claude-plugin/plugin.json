@@ -1,9 +1,17 @@
 {
   "name": "explain",
-  "description": "Two skills for explaining to a person who was not there: write up what a working session found (explain-context), and explain a long or familiar-looking source without skipping a part (explain-source).",
-  "author": { "name": "Dmytro Yaremenko" },
+  "description": "Write up what a working session found or decided, for a person who was not in it and reads alone: a Markdown write-up in many small sections that is easy to skim.",
+  "author": {
+    "name": "Dmytro Yaremenko"
+  },
   "homepage": "https://github.com/ydmitry/explain-skills",
   "repository": "https://github.com/ydmitry/explain-skills",
   "license": "MIT",
-  "keywords": ["explain", "write-up", "hand-over", "summary", "readability"]
+  "keywords": [
+    "explain",
+    "write-up",
+    "hand-over",
+    "summary",
+    "readability"
+  ]
 }

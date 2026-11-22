@@ -1,11 +1,10 @@
 # explain-skills
 
-Two Claude Code skills for explaining something to a person who was not there and reads alone.
+A Claude Code skill that writes up a working session for a person who was not there and reads alone.
 
-| Skill | Use it when | What it produces |
-|---|---|---|
-| `explain-context` | A working session ended and someone else needs what it found or decided: a hand-over, findings for a lead, a decision to sign off. | A Markdown write-up in many small sections that is easy to skim. |
-| `explain-source` | Someone has to understand a file, a diff, a paper, a contract or a license before acting on it, and the source is long or looks familiar. | A short explanation backed by a ledger that covers every part of the source. |
+`explain-context` is for the end of a working session, when someone else needs what it found or decided: a
+hand-over, findings for a lead, a decision to sign off. It produces a Markdown write-up in many small sections that
+is easy to skim.
 
 ## Install
 
@@ -20,10 +19,9 @@ claude plugin marketplace add ydmitry/explain-skills
 claude plugin install explain@explain-skills
 ```
 
-The skills are then `/explain:explain-context` and `/explain:explain-source`. Claude also picks them up by itself when
-a request fits their description.
+The skill is then `/explain:explain-context`. Claude also picks it up by itself when a request fits its description.
 
-To use one without the plugin, copy its folder from `skills/` into `~/.claude/skills/`.
+To use it without the plugin, copy `skills/explain-context` into `~/.claude/skills/`.
 
 ## explain-context
 
@@ -58,22 +56,6 @@ problems to 0, with the same length and the same score on the detail questions.
 
 What the numbers do not show: whether a person finds the write-up pleasant to read. A model reader cannot judge that.
 The rules on form come from one person reading the write-ups side by side.
-
-## explain-source
-
-A model that recognises a source tends to explain it from memory. In the test, a license text looked like GPL-3 but
-had five changed or added clauses. Without a skill, Claude Haiku named none of them in five runs.
-
-The skill makes Claude read the source in order and keep a ledger: one row for each part, with a quote copied from it
-and the lines it sits on. A script, `scripts/check_ledger.py`, checks that the rows cover the whole source. The explanation is written
-from the ledger.
-
-| | No skill | `explain-source` |
-|---|---|---|
-| Changed clauses named, of 25 (5 clauses, 5 runs) | 0 | 22 |
-
-The cost is real: a run took 2 to 4 minutes and 6 to 10 times the tokens of a plain answer. On short sources that
-Claude does not recognise, the plain answer was already complete, so the skill is for the long and the familiar.
 
 ## License
 
