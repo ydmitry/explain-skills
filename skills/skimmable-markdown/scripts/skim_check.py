@@ -46,6 +46,8 @@ def first_sentence(line: str) -> str:
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     text = open(args[0]).read()
+    # a block of settings between two --- lines at the top is not text for a reader
+    text = re.sub(r"\A---\n.*?\n---\n", "", text, count=1, flags=re.S)
     sections = split_sections(text)
     problems, skim = [], []
     for sec in sections:

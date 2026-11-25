@@ -3,7 +3,7 @@
   "owner": {
     "name": "Dmytro Yaremenko"
   },
-  "description": "Skills for texts a person reads alone: write up a working session, or make any longer text easy to skim.",
+  "description": "Skills for a text a person reads alone and has to trust: easy to skim, free of slop, and true to its sources.",
   "plugins": [
     {
       "name": "explain",

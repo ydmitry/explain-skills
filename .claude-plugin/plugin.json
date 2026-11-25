@@ -1,6 +1,6 @@
 {
   "name": "explain",
-  "description": "Write up what a working session found or decided, for a person who was not in it and reads alone: a Markdown write-up in many small sections that is easy to skim. Also a skill with the form rules alone, for any text over about 300 words.",
+  "description": "Five skills for a text a person reads alone and has to trust: write Markdown that is easy to skim, clean its sentences of slop, keep the sources while the work runs, have a second reader check the text against them, and test it on a reader with no context.",
   "author": {
     "name": "Dmytro Yaremenko"
   },
@@ -11,8 +11,11 @@
     "explain",
     "write-up",
     "hand-over",
-    "summary",
     "readability",
-    "skimmable"
+    "skimmable",
+    "markdown",
+    "deslop",
+    "sources",
+    "fact-check"
   ]
 }
