@@ -1,6 +1,6 @@
 {
   "name": "explain",
-  "description": "Write up what a working session found or decided, for a person who was not in it and reads alone: a Markdown write-up in many small sections that is easy to skim.",
+  "description": "Write up what a working session found or decided, for a person who was not in it and reads alone: a Markdown write-up in many small sections that is easy to skim. Also a skill with the form rules alone, for any text over about 300 words.",
   "author": {
     "name": "Dmytro Yaremenko"
   },
@@ -12,6 +12,7 @@
     "write-up",
     "hand-over",
     "summary",
-    "readability"
+    "readability",
+    "skimmable"
   ]
 }

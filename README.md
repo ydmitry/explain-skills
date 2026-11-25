@@ -1,10 +1,14 @@
 # explain-skills
 
-A Claude Code skill that writes up a working session for a person who was not there and reads alone.
+Two Claude Code skills for texts a person reads alone: one writes up a working session, one makes any longer text
+easy to skim.
 
 `explain-context` is for the end of a working session, when someone else needs what it found or decided: a
 hand-over, findings for a lead, a decision to sign off. It produces a Markdown write-up in many small sections that
 is easy to skim.
+
+`skimmable` is for any text over about 300 words (a report, a README, a design note, a long answer). It holds the
+rules on form only: small sections, the point first, one thing in bold, the form that fits the content.
 
 ## Install
 
@@ -19,9 +23,10 @@ claude plugin marketplace add ydmitry/explain-skills
 claude plugin install explain@explain-skills
 ```
 
-The skill is then `/explain:explain-context`. Claude also picks it up by itself when a request fits its description.
+The skills are then `/explain:explain-context` and `/explain:skimmable`. Claude also picks one up by itself when a
+request fits its description.
 
-To use it without the plugin, copy `skills/explain-context` into `~/.claude/skills/`.
+To use one without the plugin, copy its folder from `skills/` into `~/.claude/skills/`.
 
 ## explain-context
 
@@ -56,6 +61,27 @@ problems to 0, with the same length and the same score on the detail questions.
 
 What the numbers do not show: whether a person finds the write-up pleasant to read. A model reader cannot judge that.
 The rules on form come from one person reading the write-ups side by side.
+
+## skimmable
+
+**The same test, for any text: it is easy to skim with the eyes.** The rules are about form; what the text says, and
+how much of it, comes from the task, and a rewrite keeps every fact.
+
+The skill asks for:
+
+- the answer first, then one idea in each section of at most 300 words, under a heading that says what is inside;
+- an argument as a short paragraph, steps as a numbered list, the same facts over several cases as a table;
+- paragraphs of at most 60 words that open with their point, and one thing in bold in each section;
+- no headings at all under about 300 words.
+
+It ships the same check, `scripts/skim_check.py`.
+
+### What was measured
+
+Less than for `explain-context`. On the four synthetic sessions, model readers and judges showed no difference
+between `skimmable` write-ups and no-skill ones: in the names a cold reader cannot say, in side-stories let in, and
+in statements the session contradicts. Whether the text is easier for a person to skim was not measured; the rules
+come from one person reading write-ups side by side.
 
 ## License
 

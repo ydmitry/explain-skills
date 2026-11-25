@@ -2,8 +2,9 @@
 """Check that a Markdown write-up is easy to skim: python3 skim_check.py FILE [--skim]
 
 Prints one line per problem and `problems=N`. Exit 0 when there are none.
---skim prints what a skimming eye sees: the headings, the bold text and each
-paragraph's first sentence. Read that view alone: it should tell the story.
+--skim prints what a skimming eye sees: the headings, the bold text, each
+paragraph's first sentence and the first sentence of each bullet in a short
+list. Read that view alone: it should tell the story.
 """
 import re
 import sys
@@ -11,13 +12,41 @@ import sys
 MAX_PARA = 60      # words in one prose paragraph
 MAX_SECTION = 300  # words in one section
 MAX_BULLET_RUN = 8 # bullets in a row before the eye stops reading them
-MAX_BOLD = 0.15    # share of a section's words in bold
+MAX_BOLD = 0.15    # share of a section's words in bold, labels not counted
+ABBREV = r"(?i)\b(?:e\.g|i\.e|etc|vs|approx|incl|cf|ca|fig)\.$"
+
+
+def split_sections(text: str) -> list:
+    """The text cut at its headings. A line that starts with # inside a code fence is not a heading."""
+    parts, fenced = [[]], False
+    for line in text.split("\n"):
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+        elif not fenced and re.match(r"#{1,6} ", line):
+            parts.append([])
+        parts[-1].append(line)
+    return ["\n".join(p) for p in parts if "".join(p).strip()]
+
+
+def first_sentence(line: str) -> str:
+    """A line up to the end of its first sentence, at most 160 characters.
+    A list marker ("1.", "-") and an abbreviation ("e.g.") do not end a sentence."""
+    line = line.strip()
+    marker = re.match(r"(?:[-*]|\d+\.)\s+", line)
+    start = marker.end() if marker else 0
+    for m in re.finditer(r"[.!?](?=\s)", line[start:]):
+        end = start + m.end()
+        if re.search(ABBREV, line[:end]) or line[end:].lstrip()[:1].islower():
+            continue
+        line = line[:end]
+        break
+    return line if len(line) < 160 else line[:157] + "..."
 
 
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     text = open(args[0]).read()
-    sections = [s for s in re.split(r"(?m)^(?=#{1,6} )", text) if s.strip()]
+    sections = split_sections(text)
     problems, skim = [], []
     for sec in sections:
         lines = sec.split("\n")
@@ -27,25 +56,30 @@ def main() -> int:
         skim.append("\n" + head)
         words = len(" ".join(body).split())
         bold = " ".join(re.findall(r"\*\*(.+?)\*\*", " ".join(body)))
+        # a label that opens a paragraph or a list item is not emphasis: leave it out of the bold share
+        emphasis = " ".join(re.findall(r"\*\*(.+?)\*\*", " ".join(re.sub(r"^\s*(?:[-*]|\d+\.)?\s*\*\*.+?\*\*", "", l) for l in body)))
         if words > MAX_SECTION:
             problems.append(f"{name}: section is {words} words (over {MAX_SECTION}); split it")
         if words > 40 and not bold:
             problems.append(f"{name}: nothing in bold; mark the one thing that matters most here")
-        if words and len(bold.split()) / words > MAX_BOLD and words > 40:
-            problems.append(f"{name}: {100 * len(bold.split()) // words}% of the section is bold; keep the label and one key point")
-        run = 0
+        if words > 40 and len(emphasis.split()) / words > MAX_BOLD:
+            problems.append(f"{name}: {100 * len(emphasis.split()) // words}% of the section is bold beyond its labels; keep one key point")
+        run = []
         for line in body + [""]:
             if re.match(r"\s*([-*]|\d+\.) ", line):
-                run += 1
+                run.append(line.strip())
                 continue
-            if run > MAX_BULLET_RUN:
-                problems.append(f"{name}: {run} bullets in a row; group them under labels or use a table")
-            run = 0
+            if len(run) > MAX_BULLET_RUN:
+                problems.append(f"{name}: {len(run)} bullets in a row; group them under labels or use a table")
+            else:
+                # the eye still reads a short list; of a long one it keeps only the bold words
+                for item in run:
+                    skim.append("  " + first_sentence(item))
+            run = []
             if not line.strip() or line.startswith("|") or line.startswith(("```", ">")):
                 continue
             n = len(line.split())
-            first = re.split(r"(?<=[.!?])\s", line.strip())[0]
-            skim.append("  " + (first if len(first) < 160 else first[:157] + "..."))
+            skim.append("  " + first_sentence(line))
             if n > MAX_PARA:
                 problems.append(f"{name}: paragraph of {n} words (over {MAX_PARA}) starting \"{line.strip()[:40]}\"")
         for b in re.findall(r"\*\*(.+?)\*\*", " ".join(body)):

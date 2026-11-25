@@ -3,7 +3,7 @@
   "owner": {
     "name": "Dmytro Yaremenko"
   },
-  "description": "A skill that explains a working session to a person who reads alone.",
+  "description": "Skills for texts a person reads alone: write up a working session, or make any longer text easy to skim.",
   "plugins": [
     {
       "name": "explain",
