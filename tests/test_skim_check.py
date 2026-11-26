@@ -4,7 +4,7 @@ from pathlib import Path
 
 from util import run
 
-K = "skimmable-markdown/scripts/skim_check.py"
+K = "skimmable-writing/scripts/skim_check.py"
 LONG = " ".join(["word"] * 61)
 
 

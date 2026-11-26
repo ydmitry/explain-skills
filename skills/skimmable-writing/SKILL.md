@@ -1,9 +1,9 @@
 ---
-name: skimmable-markdown
+name: skimmable-writing
 description: Use when writing or rewriting a Markdown text of more than about 300 words that a person will read on their own (a report, a README, a design note, an explanation, a long answer, a hand-over or write-up of what a working session found or decided), or when asked to make a text easier to read or to skim.
 ---
 
-# skimmable-markdown
+# skimmable-writing
 
 A reader skims before they read. They look at the headings, the bold text and the first sentence of each paragraph, and from that they decide what to read in full. They stop at the first part that asks too much of them.
 

@@ -1,0 +1,53 @@
+---
+name: explain-well
+description: Runs the whole explain set, in order, on one text someone will rely on - keep-sources, skimmable-writing, deslop-prose, check-sources, cold-read, and illustrate when a page is asked for. Called by the user only.
+argument-hint: "[what to write, or the file to finish]"
+disable-model-invocation: true
+---
+
+# explain-well
+
+One command for a text someone will rely on: a report, findings, a write-up, a README. What was asked for: $ARGUMENTS
+
+**This skill owns the order, when a step is skipped and when to stop, and nothing else.** The rules of each step are in that step's skill. Load the skill when you reach its step and follow it. Nothing of it is repeated here.
+
+## The order
+
+| Step | When | Skill | Done when |
+|---|---|---|---|
+| 1 | While the work runs | `keep-sources` | `sources.py check` prints `errors=0` |
+| 2 | Writing | `skimmable-writing` | `skim_check.py` prints `problems=0` |
+| 3 | After writing | `deslop-prose` | `prose_check.py check` prints `errors=0`, and the check of step 2 still prints `problems=0` |
+| 4 | Before showing | `check-sources` and `cold-read`: two fresh readers of the same final text | `check_sources.py quotes` exits 0, and none of the four conditions of `cold-read` holds |
+| 5 | Last, only when a page is asked for | `illustrate`, if it is installed | its `gates.py` prints `errors=0` |
+
+**Every edit comes before the readers.** They read the text as it will be shown, so the two can be dispatched at the same time.
+
+## Where to start
+
+- **Nothing is written yet:** start at step 1, and keep rows from the first fact on.
+- **The work is done and no record was kept:** start at step 2. Do not rebuild a record from memory. In step 4 give `check-sources` the files, the transcript or the notes the text was written from, and say in the report that no record was kept.
+- **A draft exists:** start at step 2, as a rewrite that keeps every fact.
+
+## After a read
+
+1. Fix what blocks: a counted contradiction from `check-sources`, or a condition of `cold-read` that holds.
+2. Run the checks of steps 2 and 3 again on the changed text.
+3. Dispatch a new reader for each read that blocked. Dispatch a new `check-sources` reader as well whenever a fix added or changed a statement of fact.
+4. **Two reads at most for each reader,** four in all. Stop then, whatever the second read says.
+
+A fix made after the last read has been read by no one. List it as open.
+
+## What to skip
+
+- **A text under about 300 words, or one nobody will rely on:** this command is too much. Write it with `skimmable-writing` alone.
+- **No sources at all,** as for an opinion or a plan from scratch: skip step 1 and `check-sources`, and say so.
+- **No tool that starts a subagent:** the writer is the reader, which is weaker. Say so.
+
+## The report
+
+Show the text, then three things:
+
+- **The line each step printed,** copied from its output. A step with no line is reported as not run.
+- **What the readers found,** and what was changed for it.
+- **What is still open:** a blocking finding left after the second read, a fix no reader has seen, a statement with no source.

@@ -1,6 +1,6 @@
 ---
 name: check-sources
-description: Use when a text that states facts (a report, findings, a write-up, a README, an answer with numbers) is about to be shown or handed off and what it was written from is at hand (a keep-sources folder, files, a transcript, notes, a diff), or when asked whether a text says what its sources say.
+description: Use before showing or handing off a text that states facts (a report, findings, a write-up, a README, an answer with numbers), when what it was written from is at hand (a keep-sources folder, files, a transcript, notes, a diff), or when asked whether a text says what its sources say.
 ---
 
 # check-sources
@@ -41,7 +41,8 @@ You are the reader, and you wrote the text, so **this read is weaker.** Write th
 
 - **A source that is wrong.** The reader compares; it does not know better than the source.
 - **A source nobody saved.** A fact with no source shows up as `no source`, never as contradicted.
-- **Support far away.** One reader reads a long source once and can miss a passage. That is why `no source` does not block. In a test of the prompt this brief is adapted from, a count of unsupported statements moved as much between two readings of one text as it did when false sentences were planted. Contradictions held: that reader named 60 of 60 planted ones.
+- **Support far away.** One reader reads a long source once and can miss a passage. That is why `no source` does not block. Invented owners, dates and next steps do come back this way: in a test of this brief, 31 of 60 planted false sentences were reported as `no source` and 21 as contradicted, with no false call.
+- **Everything at once.** One reply names a handful of statements. In the same test the reader, once five false sentences stood in a text, named those and dropped most of what it had reported before. After the fixes, a new read can bring up others.
 
 ## With the other skills
 

@@ -1,6 +1,6 @@
 ---
 name: cold-read
-description: Use when a document someone will read without the chat (a page, README, spec, PR description, one-pager, hand-over, verdict) is about to be shown or handed off, or when asked for a cold read or whether a reader with no context gets the point.
+description: Use before showing or handing off a document someone will read without the chat (a page, README, spec, PR description, one-pager, hand-over, verdict), or when asked for a cold read or whether a reader with no context gets the point.
 ---
 
 # cold-read
@@ -85,5 +85,5 @@ your `done:` line. If the Definition of done asks for a cold read, a blocking re
 ## With the other skills
 
 This skill owns one question: does a reader with no context get the point. `check-sources` asks the other one, whether
-the text says what its sources say. Both read the text as it will be shown, after `skimmable-markdown` and
+the text says what its sources say. Both read the text as it will be shown, after `skimmable-writing` and
 `deslop-prose`. Each works without the others.

@@ -189,9 +189,9 @@ def start(a) -> int:
     return 0
 
 
-def scan(a) -> int:
-    text = Path(a.file).expanduser().read_text()
-    hits, lines_hit, dashes, words = 0, set(), 0, 0
+def find(text: str):
+    """The known tells of a text: ([(line number, kind of tell, the words, the place)], dashes, words of prose)."""
+    hits, dashes, words = [], 0, 0
     for i, line, kind in body_lines(text):
         if kind not in ("para", "item", "table"):
             continue
@@ -202,25 +202,25 @@ def scan(a) -> int:
         for name, pats in COMPILED:
             for pat in pats:
                 for m in pat.finditer(p):
-                    hits += 1
-                    lines_hit.add(i)
                     lo, hi = max(0, m.start() - 40), min(len(p), m.end() + 40)
-                    print(f"LINE {i} [{name}] \"{m.group(0).strip(' ,')}\": ...{p[lo:hi].strip()}...")
+                    hits.append((i, name, m.group(0).strip(" ,"), p[lo:hi].strip()))
+    return hits, dashes, words
+
+
+def scan(a) -> int:
+    hits, dashes, words = find(Path(a.file).expanduser().read_text())
+    for i, name, said, place in hits:
+        print(f"LINE {i} [{name}] \"{said}\": ...{place}...")
     rate = f"{1000 * dashes / words:.1f}" if words else "0"
-    print(f"found={hits} in {len(lines_hit)} lines; dashes={dashes} ({rate} per 1,000 words)")
+    print(f"found={len(hits)} in {len({h[0] for h in hits})} lines; dashes={dashes} ({rate} per 1,000 words)")
     print("A listed line may be fine. Forced threes, closers that repeat and empty paragraphs are not listed: read for them.")
     return 0
 
 
-def check(a) -> int:
-    path = Path(a.file).expanduser()
-    before_path = Path(a.before).expanduser() if a.before else copy_path(path)
-    if not before_path.exists():
-        print(f"no copy from before the rewrite ({before_path}); run `start FILE` first, or give --before OTHER")
-        print("errors=1")
-        return 1
-    old, new = shape(before_path.read_text()), shape(path.read_text())
-    gone_ok = {number(g) for g in a.gone or []} | set(a.gone or [])
+def compare(before: str, after: str, gone=()):
+    """(errors, notes) of a rewrite: what it changed that a sentence-level pass must leave alone."""
+    old, new = shape(before), shape(after)
+    gone_ok = {number(g) for g in gone} | set(gone)
     errors, notes = [], []
     heads_old = [s["heading"] for s in old["sections"]]
     heads_new = [s["heading"] for s in new["sections"]]
@@ -252,6 +252,17 @@ def check(a) -> int:
     notes.append(f"words: {old['words']} before, {new['words']} after")
     if new["words"] > old["words"]:
         notes.append("the text grew; a pass that removes should not add")
+    return errors, notes
+
+
+def check(a) -> int:
+    path = Path(a.file).expanduser()
+    before_path = Path(a.before).expanduser() if a.before else copy_path(path)
+    if not before_path.exists():
+        print(f"no copy from before the rewrite ({before_path}); run `start FILE` first, or give --before OTHER")
+        print("errors=1")
+        return 1
+    errors, notes = compare(before_path.read_text(), path.read_text(), a.gone or [])
     for e in errors:
         print("ERROR " + e)
     for n in notes:

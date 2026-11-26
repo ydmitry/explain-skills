@@ -1,6 +1,6 @@
 ---
 name: deslop-prose
-description: Use when prose reads as machine-written or padded (stock AI words, "not X but Y", staged openers, one-line closers, forced threes, inflated claims, chat leftovers), when asked to deslop, de-AI, humanize or tighten a text, or as the last pass over the sentences of a text before it is checked and shown.
+description: Use after writing, as the last pass over the sentences of a text before it is checked and shown, or when prose reads as machine-written or padded (stock AI words, "not X but Y", staged openers, one-line closers, forced threes, inflated claims, chat leftovers), or when asked to deslop, de-AI, humanize or tighten a text.
 ---
 
 # deslop-prose
@@ -13,7 +13,7 @@ Slop is a sentence that signals instead of saying. The reader's eye stops on it 
 
 Only the wording of sentences, in paragraphs, list items and table cells. **It removes and rewords. It adds no fact, no example and no opinion.**
 
-It leaves as they are: the headings, the number of list items and table rows, what is in bold, code and inline code, links, and every number, name, date and quote. The words inside bold may be reworded; the bold stays. Structure belongs to whoever wrote the text, or to `skimmable-markdown`.
+It leaves as they are: the headings, the number of list items and table rows, what is in bold, code and inline code, links, and every number, name, date and quote. The words inside bold may be reworded; the bold stays. Structure belongs to whoever wrote the text, or to `skimmable-writing`.
 
 A sentence that holds a fact keeps the fact. Only a sentence with no fact in it is cut whole.
 
@@ -54,6 +54,8 @@ The fact underneath is usually sound. **Keep the fact and remove the dressing.**
 
 A text with no tell goes back unchanged. Say so.
 
+For each tell, `${CLAUDE_SKILL_DIR}/references/keep-cases.md` gives one edit and one case where the same turn of phrase stays, and five weaker tells. Read it before cutting a sentence whole, and when a listed line may be carrying information.
+
 ## The pass on a file
 
 1. **Keep a copy:** `python3 ${CLAUDE_SKILL_DIR}/scripts/prose_check.py start FILE`.
@@ -61,9 +63,10 @@ A text with no tell goes back unchanged. Say so.
 3. **Read the whole text once** for what the scan cannot see: threes, closers that repeat, a paragraph that says nothing new.
 4. **Rewrite sentence by sentence.** State the point directly. Swapping a listed word for its synonym leaves the same empty sentence.
 5. **Check the limits:** `python3 ${CLAUDE_SKILL_DIR}/scripts/prose_check.py check FILE` until it prints `errors=0`. It compares with the copy: same headings, lists, tables, bold and code, every number, code name and link kept, none added. When a number stood only in a sentence that had to go, pass `--gone "3"`.
-6. **Scan again.** A line still listed stays only for a reason under "When to leave it".
+6. **Read the rewrite against the copy for meaning.** The check cannot see a lost "not", "only if" or "may", or an opinion that lost its owner. What to compare is in the last section of `${CLAUDE_SKILL_DIR}/references/keep-cases.md`.
+7. **Scan again.** A line still listed stays only for a reason under "When to leave it".
 
-When the text was written with `skimmable-markdown`, run its check again afterwards.
+When the text was written with `skimmable-writing`, run its check again afterwards.
 
 Then report three things: the tells found, the ones left and why, and the words before and after.
 
@@ -73,4 +76,4 @@ With no file, do the same in the reply without the scripts. Return the rewritten
 
 ## With the other skills
 
-This skill owns the wording of sentences and nothing else. It runs after `skimmable-markdown`, which owns the structure, and before `check-sources` and `cold-read`, which read the text as it will be shown. Each works without the others.
+This skill owns the wording of sentences and nothing else. It runs after `skimmable-writing`, which owns the structure, and before `check-sources` and `cold-read`, which read the text as it will be shown. Each works without the others.

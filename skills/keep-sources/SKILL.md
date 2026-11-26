@@ -1,6 +1,6 @@
 ---
 name: keep-sources
-description: Use at the start of work whose result someone will rely on (research, an investigation, a review, a comparison, a write-up) when its facts will come from files, web pages, command output or what people said; when asked to keep, save or track sources; or when a long chat is about to state numbers, dates, names or quotes it met earlier.
+description: Use while the work runs, from its start, when its result is one someone will rely on (research, an investigation, a review, a comparison, a write-up) and its facts will come from files, web pages, command output or what people said; when asked to keep, save or track sources; or when a long chat is about to state numbers, dates, names or quotes it met earlier.
 ---
 
 # keep-sources
@@ -63,4 +63,4 @@ A snapshot can hold what should not leave the machine: command output, a page be
 
 ## With the other skills
 
-**This skill owns the record of where each fact came from.** `check-sources` reads the finished text against it, and the rule in `skimmable-markdown` that a claim carries its check is easy to meet from a row. Each works without the others.
+**This skill owns the record of where each fact came from.** `check-sources` reads the finished text against it, and the rule in `skimmable-writing` that a claim carries its check is easy to meet from a row. Each works without the others.
