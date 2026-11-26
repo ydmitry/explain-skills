@@ -18,7 +18,7 @@ One command for a text someone will rely on: a report, findings, a write-up, a R
 | 1 | While the work runs | `keep-sources` | `sources.py check` prints `errors=0` |
 | 2 | Writing | `skimmable-writing` | `skim_check.py` prints `problems=0` |
 | 3 | After writing | `deslop-prose` | `prose_check.py check` prints `errors=0`, and the check of step 2 still prints `problems=0` |
-| 4 | Before showing | `check-sources` and `cold-read`: two fresh readers of the same final text | `check_sources.py quotes` exits 0, and none of the four conditions of `cold-read` holds |
+| 4 | Before showing | `check-sources` and `cold-read`: two fresh readers of the same final text | the last line of `check_sources.py quotes` shows `counted=0`, and none of the four conditions of `cold-read` holds |
 | 5 | Last, only when a page is asked for | `illustrate`, if it is installed | its `gates.py` prints `errors=0` |
 
 **Every edit comes before the readers.** They read the text as it will be shown, so the two can be dispatched at the same time.
@@ -32,7 +32,7 @@ One command for a text someone will rely on: a report, findings, a write-up, a R
 ## After a read
 
 1. Fix what blocks: a counted contradiction from `check-sources`, or a condition of `cold-read` that holds.
-2. Run the checks of steps 2 and 3 again on the changed text.
+2. Run the form check of step 2 and the scan of `deslop-prose` again on the changed text. Do not run its `check` again: it compares with the copy from before the sentence pass, and a fix for a reader adds what that pass may not.
 3. Dispatch a new reader for each read that blocked. Dispatch a new `check-sources` reader as well whenever a fix added or changed a statement of fact.
 4. **Two reads at most for each reader,** four in all. Stop then, whatever the second read says.
 
