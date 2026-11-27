@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-2" viewBox="0 0 720 388" role="img"
+     aria-label="A real row and the file it came from. The script looks the quote up in the file, which fixes its line. The reading in plain words may hold only numbers that the quote holds, unless the row carries a calculation, given with --calc." width="720" height="388">
+  <style data-tokens="1">
+:root {
+  --bg: #ffffff;
+  --surface: #f7f8fa;
+  --border: #e2e5ec;
+  --text: #161920;
+  --text-dim: #5f6675;
+  --muted: #5b6471;
+  --accent: #2f5fd0;
+  --accent-fg: #ffffff;
+  --ok: #3f7d5c;
+  --warn: #a9791b;
+  --error: #b4483c;
+  --info: #2f5fd0;
+  --font-body: "Space Grotesk", "Avenir Next", "Segoe UI", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ok-zone: color-mix(in srgb, var(--ok) 12%, var(--surface));
+  --ok-line: color-mix(in srgb, var(--ok) 42%, var(--surface));
+  --ok-ink: color-mix(in srgb, var(--ok) 38%, var(--text));
+  --error-zone: color-mix(in srgb, var(--error) 12%, var(--surface));
+  --error-line: color-mix(in srgb, var(--error) 42%, var(--surface));
+  --error-ink: color-mix(in srgb, var(--error) 38%, var(--text));
+  --warn-zone: color-mix(in srgb, var(--warn) 12%, var(--surface));
+  --warn-line: color-mix(in srgb, var(--warn) 42%, var(--surface));
+  --warn-ink: color-mix(in srgb, var(--warn) 38%, var(--text));
+  --muted-zone: color-mix(in srgb, var(--muted) 12%, var(--surface));
+  --muted-line: color-mix(in srgb, var(--muted) 42%, var(--surface));
+  --muted-ink: color-mix(in srgb, var(--muted) 38%, var(--text));
+  --info-zone: color-mix(in srgb, var(--info) 12%, var(--surface));
+  --info-line: color-mix(in srgb, var(--info) 42%, var(--surface));
+  --info-ink: color-mix(in srgb, var(--info) 38%, var(--text));
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116;
+    --surface: #161920;
+    --border: #2a2f3a;
+    --text: #f7f8fa;
+    --text-dim: #9aa2b1;
+    --muted: #8b949e;
+    --accent: #5b8def;
+    --accent-fg: #0e1116;
+    --ok: #5b9d78;
+    --warn: #c99a3a;
+    --error: #d0685b;
+    --info: #5b8def;
+  }
+}
+:root { background: var(--surface); font-family: var(--font-body); }
+text { fill: var(--text); }
+</style>
+  <!-- edges: quote.R → hit.L | hit.B → line.R | quote.B → says.T -->
+  <defs>
+    <style>
+      #fig-2 .mono  { font-family: var(--font-mono); font-size: 12px; }
+      #fig-2 .t     { font-size: 12px; font-weight: 700; }
+      #fig-2 .s     { font-size: 12px; fill: var(--text-dim); }
+      #fig-2 .mid   { text-anchor: middle; }
+      #fig-2 .panel { fill: none; stroke: var(--border); }
+      #fig-2 .field { fill: var(--bg); stroke: var(--border); }
+      #fig-2 .opt   { fill: var(--bg); stroke: var(--border); stroke-dasharray: 4 4; }
+      #fig-2 .hot   { fill: var(--info-zone); stroke: var(--info-line); }
+      #fig-2 .bar   { fill: var(--border); }
+      #fig-2 .lit   { fill: var(--info); }
+      #fig-2 .i-i   { fill: var(--info-ink); }
+    </style>
+    <marker id="fig-2-info" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" style="fill:var(--info)"/>
+    </marker>
+  </defs>
+
+  <!-- the two cards: the row on the left, the file on the right -->
+  <rect class="panel" x="24" y="24" width="336" height="340" rx="8"/>
+  <text class="mono t" x="36" y="48">row s01</text>
+  <rect class="panel" x="480" y="24" width="216" height="130" rx="8"/>
+  <text class="mono t" x="492" y="48">service.yaml</text>
+
+  <!-- the lines of the file; the line the quote stands on is lit -->
+  <rect class="bar" x="492" y="62"  width="150" height="12" rx="3"/>
+  <rect class="bar" x="492" y="84"  width="176" height="12" rx="3"/>
+  <rect class="bar" x="492" y="106" width="128" height="12" rx="3"/>
+  <rect class="lit" data-name="hit" x="492" y="128" width="192" height="12" rx="3"/>
+
+  <!-- the fields of the row -->
+  <g transform="translate(36,64)">
+    <rect class="field" data-name="source" width="312" height="36" rx="6"/>
+    <text class="mono" x="12" y="23">source</text>
+    <text class="mono" x="104" y="23">service.yaml</text>
+  </g>
+  <g transform="translate(36,116)">
+    <rect class="hot" data-name="quote" width="312" height="36" rx="6"/>
+    <text class="mono i-i" x="12" y="23">quote</text>
+    <text class="mono" x="104" y="23">"..."</text>
+  </g>
+  <g transform="translate(36,180)">
+    <rect class="field" data-name="says" width="312" height="52" rx="6"/>
+    <text class="mono" x="12" y="22">says</text>
+    <text class="mono" x="104" y="22">"..."</text>
+    <text class="s" x="12" y="41">only numbers that the quote holds</text>
+  </g>
+  <g transform="translate(36,248)">
+    <rect class="hot" data-name="line" width="312" height="36" rx="6"/>
+    <text class="mono i-i" x="12" y="23">line</text>
+  </g>
+  <g transform="translate(36,300)">
+    <rect class="opt" data-name="calc" width="312" height="52" rx="6"/>
+    <text class="mono" x="12" y="22">--calc</text>
+    <text class="s" x="12" y="41">unless the row carries a calculation</text>
+  </g>
+
+  <!-- the lookup, and the line it fixes -->
+  <line x1="348" y1="134" x2="489" y2="134" style="stroke:var(--info)" stroke-width="1.5" marker-end="url(#fig-2-info)"/>
+  <text class="s mid" x="420" y="126">looks the quote up</text>
+  <path d="M588 140 V266 H351" fill="none" style="stroke:var(--info)" stroke-width="1.5" marker-end="url(#fig-2-info)"/>
+  <text class="s mid" x="470" y="258">fixes its line</text>
+  <!-- the reading is read off the quote -->
+  <line x1="192" y1="152" x2="192" y2="177" style="stroke:var(--info)" stroke-width="1.5" marker-end="url(#fig-2-info)"/>
+</svg>

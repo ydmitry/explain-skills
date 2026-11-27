@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 720 312" role="img"
+     aria-label="A long chat, from left to right. The source is in view only while it is read, and the summary that follows keeps a retelling. The row written at that moment reaches the text and the check unchanged." width="720" height="312">
+  <style data-tokens="1">
+:root {
+  --bg: #ffffff;
+  --surface: #f7f8fa;
+  --border: #e2e5ec;
+  --text: #161920;
+  --text-dim: #5f6675;
+  --muted: #5b6471;
+  --accent: #2f5fd0;
+  --accent-fg: #ffffff;
+  --ok: #3f7d5c;
+  --warn: #a9791b;
+  --error: #b4483c;
+  --info: #2f5fd0;
+  --font-body: "Space Grotesk", "Avenir Next", "Segoe UI", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ok-zone: color-mix(in srgb, var(--ok) 12%, var(--surface));
+  --ok-line: color-mix(in srgb, var(--ok) 42%, var(--surface));
+  --ok-ink: color-mix(in srgb, var(--ok) 38%, var(--text));
+  --error-zone: color-mix(in srgb, var(--error) 12%, var(--surface));
+  --error-line: color-mix(in srgb, var(--error) 42%, var(--surface));
+  --error-ink: color-mix(in srgb, var(--error) 38%, var(--text));
+  --warn-zone: color-mix(in srgb, var(--warn) 12%, var(--surface));
+  --warn-line: color-mix(in srgb, var(--warn) 42%, var(--surface));
+  --warn-ink: color-mix(in srgb, var(--warn) 38%, var(--text));
+  --muted-zone: color-mix(in srgb, var(--muted) 12%, var(--surface));
+  --muted-line: color-mix(in srgb, var(--muted) 42%, var(--surface));
+  --muted-ink: color-mix(in srgb, var(--muted) 38%, var(--text));
+  --info-zone: color-mix(in srgb, var(--info) 12%, var(--surface));
+  --info-line: color-mix(in srgb, var(--info) 42%, var(--surface));
+  --info-ink: color-mix(in srgb, var(--info) 38%, var(--text));
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116;
+    --surface: #161920;
+    --border: #2a2f3a;
+    --text: #f7f8fa;
+    --text-dim: #9aa2b1;
+    --muted: #8b949e;
+    --accent: #5b8def;
+    --accent-fg: #0e1116;
+    --ok: #5b9d78;
+    --warn: #c99a3a;
+    --error: #d0685b;
+    --info: #5b8def;
+  }
+}
+:root { background: var(--surface); font-family: var(--font-body); }
+text { fill: var(--text); }
+</style>
+  <!-- edges: source.T → summary.L | summary.R → text.T | source.R → row.L | row.R → text.L | text.R → check.L -->
+  <defs>
+    <style>
+      #fig-1 .t    { font-size: 12px; font-weight: 700; }
+      #fig-1 .s    { font-size: 12px; fill: var(--text-dim); }
+      #fig-1 .mid  { text-anchor: middle; }
+      #fig-1 .card { fill: var(--bg); stroke: var(--border); }
+      #fig-1 .okz  { fill: var(--ok-zone); stroke: var(--ok-line); }
+      #fig-1 .mz   { fill: var(--muted-zone); stroke: var(--muted-line); }
+      #fig-1 .ok-i { fill: var(--ok-ink); }
+      #fig-1 .m-i  { fill: var(--muted-ink); }
+    </style>
+    <marker id="fig-1-ok" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" style="fill:var(--ok)"/>
+    </marker>
+    <marker id="fig-1-muted" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/>
+    </marker>
+  </defs>
+
+  <!-- the axis: a long chat, left to right (a legend, not topology) -->
+  <g class="legend">
+    <text class="t m-i" x="24" y="32">A long chat</text>
+    <line x1="24" y1="44" x2="696" y2="44" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#fig-1-muted)"/>
+  </g>
+
+  <!-- decoration first: the bracket under row, text, check -->
+  <g class="decor">
+    <path d="M216 264 V272 H696 V264" fill="none" style="stroke:var(--ok)" stroke-width="1.5"/>
+  </g>
+  <text class="t ok-i mid" x="456" y="292">unchanged</text>
+
+  <!-- upper route: the summary keeps a retelling, a number drifts -->
+  <g transform="translate(216,72)">
+    <rect class="mz" data-name="summary" width="144" height="56" rx="8"/>
+    <text class="t m-i mid" x="72" y="24">summary</text>
+    <text class="s mid" x="72" y="42">keeps a retelling</text>
+  </g>
+  <path d="M96 184 V100 H213" fill="none" style="stroke:var(--muted)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#fig-1-muted)"/>
+  <path d="M360 100 H468 V193" fill="none" style="stroke:var(--muted)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#fig-1-muted)"/>
+  <text class="s mid" x="414" y="92">a number drifts</text>
+
+  <!-- lower route: source, row, text, check -->
+  <g transform="translate(24,184)">
+    <rect class="card" data-name="source" width="144" height="72" rx="8"/>
+    <text class="mid" x="72" y="26"><tspan class="t">source</tspan><tspan class="s" x="72" dy="20">in view only</tspan><tspan class="s" x="72" dy="16">while it is read</tspan></text>
+  </g>
+  <line x1="168" y1="220" x2="213" y2="220" style="stroke:var(--ok)" stroke-width="1.5" marker-end="url(#fig-1-ok)"/>
+  <g transform="translate(216,184)">
+    <rect class="okz" data-name="row" width="144" height="72" rx="8"/>
+    <text class="mid" x="72" y="26"><tspan class="t ok-i">row</tspan><tspan class="s" x="72" dy="20">written at</tspan><tspan class="s" x="72" dy="16">that moment</tspan></text>
+  </g>
+  <line x1="360" y1="220" x2="405" y2="220" style="stroke:var(--ok)" stroke-width="1.5" marker-end="url(#fig-1-ok)"/>
+  <g transform="translate(408,196)">
+    <rect class="card" data-name="text" width="120" height="48" rx="8"/>
+    <text class="t mid" x="60" y="28">text</text>
+  </g>
+  <line x1="528" y1="220" x2="573" y2="220" style="stroke:var(--ok)" stroke-width="1.5" marker-end="url(#fig-1-ok)"/>
+  <g transform="translate(576,196)">
+    <rect class="card" data-name="check" width="120" height="48" rx="8"/>
+    <text class="t mid" x="60" y="28">check</text>
+  </g>
+</svg>
