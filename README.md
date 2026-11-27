@@ -40,10 +40,10 @@ The skill asks for:
 - the answer first, then one idea in each section of at most 300 words, under a heading that says what is inside;
 - an argument as a short paragraph, steps as a numbered list, the same facts over several cases as a table;
 - paragraphs of at most 60 words that open with their point, and one thing in bold in each section;
-- plain words in place of a name made up during the work, a number with what it covers, a claim with the check that showed it;
+- plain words in place of a name made up during the work, a number with what it covers, a claim with the check that showed it, a fact from a file or a page with a pointer to it;
 - for a hand-over: a dated status line, a short summary, and what was ruled out, what is not known and who does what next.
 
-It ships `scripts/skim_check.py`. The check prints what a skimming eye sees and lists what breaks the rules above.
+It ships `scripts/skim_check.py`. The check prints what a skimming eye sees and lists what breaks the rules above. It also notes, as a count and not a problem, when three or more headings open with the same word.
 
 Until 2026-11-26 this skill was named `skimmable-markdown`.
 
@@ -99,7 +99,7 @@ It is not measured.
 
 ## What was measured
 
-**Three checks ran on the skills as they are, on 2026-11-25. Two skills and the main claim are not measured.** The texts are write-ups of four synthetic working sessions of about 3,300 words each. Claude Haiku wrote them, and a second model read them with no other context.
+**Three checks ran on the skills as they are, on 2026-11-25. `keep-sources` and the main claim are not measured.** The texts are write-ups of four synthetic working sessions of about 3,300 words each. Claude Haiku wrote them, and a second model read them with no other context.
 
 | Claim | What was seen | Measured on |
 |---|---|---|
@@ -107,6 +107,32 @@ It is not measured.
 | The `check-sources` reader finds false sentences planted in a text | 52 of 60 named, and no false call on those texts. 21 came back as contradicted, 31 as no source. | the skill's own brief, with the text inline and a reader without tools |
 | One reply of that reader lists everything | No. It lists a handful. With five false sentences planted in a text it dropped most of what it had reported before, and the count of reported statements rose by 1.75 where the bar asked for 1.78. | the same |
 | `deslop-prose` beats a one-line instruction | Not shown: there was no room. Told in one sentence to remove filler, Claude Haiku removed 7.85 of 8 planted sentences and broke no limit, so the comparison was not run. | planted whole sentences only |
+
+## Checks that need no human reader
+
+**Eight checks on 2026-11-26 and 2026-11-27 show no gain from `skimmable-writing` over no skill.** They ran on 80 saved write-ups of the same four sessions: 40 made with no skill, and 40 made with the skill as it stood on 2026-11-25.
+
+A model judge counts as proven only after it moved the right way on damage that a script had planted.
+
+| Question | What was seen | Grader |
+|---|---|---|
+| Does the skill keep one idea a section better? | No room: with no skill only 5 of 20 write-ups had a section flagged, and the bar for room was 7. | a model judge, proven |
+| Does a model prefer the skill's write-up? | No: of 14 pairs it picked each side 3 times and gave no pick 8 times. It picked the text shown first in 27 of 40 calls. | a model asked in both orders, proven |
+| Does the skill put key points nearer the top? | Not measured. The score failed two proofs, the second by 0.02 against its bar. | a model judge, not proven |
+| Does the `cold-read` reader see planted damage? | Not shown, for any of three conditions. | the skill's reader on Claude Haiku, with the text inline |
+| Does that reader block fewer write-ups made with the skill? | No gap shown: it blocked 19 of 20 made with the skill and 18 of 20 made without. | the same reader, not proven |
+
+## What two counts by script found
+
+**No write-up links to its sources, and pages written with the set open most headings with the same word.** A count describes and is not a grade.
+
+| Question | What was seen |
+|---|---|
+| Does a text point to its sources? | None of the 80 write-ups holds a link. A text written with the whole set, from a record of 71 sourced facts, pointed to none of them. |
+| Do the headings open with the same word? | On six of seven pages written with the set, 43% to 71% of them do. In the 80 write-ups the share is 15% with no skill and 18% with it. |
+| Do the sections look less alike with the skill? | Not shown. |
+
+Two things were changed on 2026-11-27 after these counts, and no writer has been tested with either. `skimmable-writing` now asks for a pointer to the source of a fact, and `skim_check.py` notes headings that open with the same word.
 
 ## What was not measured, or only on earlier forms
 
@@ -116,7 +142,7 @@ It is not measured.
 |---|---|---|
 | Claude runs the form check when it can | In 12 of 12 runs; listed problems went from 7.9 to 0. | the same script, an older skill text |
 | A count of statements with no source is stable | No: two readings of one text differed as much as planted sentences moved it. This is why "no source" does not block. | an earlier prompt |
-| `keep-sources`, `cold-read` | Not measured here. | |
+| `keep-sources` | Not measured here. | |
 
 A model reader cannot judge whether a text is pleasant to read. Treat the form rules as one person's taste, written down.
 

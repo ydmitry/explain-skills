@@ -47,10 +47,11 @@ A section of plain paragraphs gives the eye nothing to land on. So:
 
 Names the reader will search for or type (a flag, a ticket, a commit, a file, a command) stay, in backticks. A term the reader may not know is explained where it first appears; there is no glossary.
 
-## Numbers and claims
+## Numbers, claims and sources
 
 - **A number carries what it covers** where it is given: the period, the group, what was left out.
 - **A claim carries the check that showed it** and what the check returned.
+- **A fact from a file or a page carries a pointer to it,** where the fact is stated: a link, or the path with the line (`src/billing/retry.py:12`), copied from where you read it or from its `keep-sources` row. A reader who doubts the fact can then follow it.
 
 ## Short texts
 
@@ -71,6 +72,8 @@ A hand-over, findings for a lead, a decision to sign off: the reader has only th
 When the text is a file, check it: `python3 ${CLAUDE_SKILL_DIR}/scripts/skim_check.py FILE --skim`. It prints what a skimming eye sees and lists paragraphs over 60 words, sections over 300, sections with nothing in bold or too much of it, and long runs of bullets. The check reads each line as one paragraph, so **write each paragraph on one line.**
 
 Fix what it lists, then read the skim view alone: if it does not tell the story, the headings and first sentences need rewriting.
+
+A line that starts `NOTE` is a count and not a problem. It appears when three or more headings, and two fifths of them all, open with the same word ("What it reads", "What it prints"). Reword the headings where that word says nothing about the section.
 
 ## With the other skills
 

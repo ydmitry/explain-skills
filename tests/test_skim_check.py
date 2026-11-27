@@ -47,6 +47,37 @@ class SkimCheck(unittest.TestCase):
         self.assertIn("bold: It holds.", out)
         self.assertNotIn("More follows here", out.split("bold:")[0])
 
+    def test_headings_that_open_with_one_word_are_noted(self):
+        code, out = self.check("# Title\n\n## What it reads\n\n## What it prints\n\n## What it cannot show\n\n## Limits\n")
+        self.assertIn('NOTE 3 of 5 headings open with "What"', out)
+
+    def test_the_note_on_headings_is_not_a_problem(self):
+        code, out = self.check("# Title\n\n## What it reads\n\n## What it prints\n\n## What it cannot show\n\n## Limits\n")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(out.strip().split("\n")[-1], "problems=0")
+
+    def test_headings_that_open_with_different_words_get_no_note(self):
+        code, out = self.check("# Title\n\n## Sources\n\n## Reading order\n\n## What it cannot show\n\n## Limits\n")
+        self.assertNotIn("NOTE", out)
+
+    def test_two_headings_with_one_opening_word_get_no_note(self):
+        code, out = self.check("# Title\n\n## What it reads\n\n## What it prints\n")
+        self.assertNotIn("NOTE", out)
+
+    def test_a_shared_word_in_under_two_fifths_of_the_headings_gets_no_note(self):
+        heads = ["What it reads", "What it prints", "What it cannot show", "Sources", "Order", "Limits", "Cost", "Records"]
+        code, out = self.check("# Title\n\n" + "".join(f"## {h}\n\n" for h in heads))
+        self.assertNotIn("NOTE", out)
+
+    def test_a_number_before_the_opening_word_is_left_out(self):
+        code, out = self.check("# Title\n\n## 1. How it starts\n\n## 2. How it runs\n\n## 3. how it stops\n")
+        self.assertIn('NOTE 3 of 4 headings open with "How"', out)
+
+    def test_a_heading_inside_a_code_fence_is_not_counted(self):
+        fence = "```\n# What a\n# What b\n# What c\n```\n"
+        code, out = self.check("# Title\n\n## Sources\n\n" + fence + "\n## Limits\n")
+        self.assertNotIn("NOTE", out)
+
 
 if __name__ == "__main__":
     unittest.main()
