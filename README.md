@@ -142,7 +142,15 @@ Two things were changed on 2026-11-27 after these counts. `skimmable-writing` no
 
 A script looked each pointer up in the transcript the write-up was written from. Of the 83 pointers made with the rule it could not place 2, and both are right on reading. Where a transcript showed no line of any file, the writers made none up.
 
-The writer had a transcript and no files, so this does not show what a writer with tools does. It also does not show that the line a pointer names says what the sentence says.
+The writer had a transcript and no files. It also does not show that the line a pointer names says what the sentence says.
+
+## The pointer rule, on a writer that opens files
+
+**With the rule, 18 of 20 write-ups point to a line that exists, against 0 of 20 without it, and none of 142 pointers leads nowhere.** On 2026-11-27 Claude Haiku got a folder with one script and its tests, tools to read them, and a request for a hand-over that named no pointer. Four folders, five write-ups each, with the two skill texts of the check above.
+
+A script looked each pointer up in the folder: the file is there and has that line. Without the rule no write-up named a line, and both sets named bare file names about as often, 181 and 183 times. The write-ups are as long in both sets.
+
+The limits: one model, and files of 83 to 352 lines. A rough count found a number or a code word of the sentence on the lines named for 63 of the 142 pointers, and that is not a reading of whether a line says what its sentence says.
 
 ## The `cold-read` reader, run the way the skill runs it
 
@@ -180,9 +188,27 @@ A model reader cannot judge whether a text is pleasant to read. Treat the form r
 
 **`illustrate` turns the checked text into one HTML page with figures.** It runs last and is not in this repository.
 
-## Where the patterns come from
+## Credits
 
-The tells in `deslop-prose` follow Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) and the [humanizer](https://github.com/blader/humanizer) skill (MIT), reworded and cut down to sentences. Its formatting rules are left out on purpose: here the structure belongs to the writer.
+**`deslop-prose` adapts published text, and the table lists published work that was read for comparison on 2026-11-21 and 2026-11-22.**
+
+- The tells in `deslop-prose` follow Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) and the [humanizer](https://github.com/blader/humanizer) skill (MIT), reworded and cut down to sentences. Its formatting rules are left out on purpose: here the structure belongs to the writer.
+- `illustrate`, the step kept elsewhere, began as an adaptation of [visual-explainer](https://github.com/nicobailon/visual-explainer) by Nico Bailon (MIT). visual-explainer in turn credits [Anthropic's frontend-design skill](https://github.com/anthropics/skills) and [interface-design](https://github.com/Dammyjay93/interface-design) for ideas.
+
+| Work | Bears on | What it is |
+|---|---|---|
+| [plain-writing-skill](https://github.com/docwriter-org/plain-writing-skill) | `skimmable-writing` | 25 word and sentence rules with an eval harness |
+| [docs-writing](https://github.com/mblode/agent-skills) by mblode, since retired | `skimmable-writing` | 51 rules for technical docs: the bottom line first, one idea a section |
+| Microsoft, [Scannable content](https://learn.microsoft.com/en-us/style-guide/scannable-content) | `skimmable-writing` | a style-guide page for human writers |
+| NN/g, [Concise, Scannable, and Objective](https://www.nngroup.com/articles/concise-scannable-and-objective-how-to-write-for-the-web/) (1997) | `skimmable-writing` | a reader study of scannable web text |
+| [lucid-lint](https://github.com/bastien-gallay/lucid-lint) | its check script | a linter of paragraph and sentence length |
+| Suhail Mohebi, [handoff packets](https://suhailmohebi.com/notes/handoff-packets/) | the hand-over rules | a hand-over template with evidence and open questions |
+| [Handoff Debt](https://arxiv.org/html/2606.02875) | the hand-over rules | a paper that measures a successor agent given notes or the raw record |
+| [review-report](https://github.com/Hiveteq/review-report) | `cold-read` | a diff walkthrough with a fresh reader pass |
+| [cold-read-gate](https://www.claudepluginhub.com/skills/laurigates-agent-patterns-plugin-agent-patterns-plugin-2/cold-read-gate) | `cold-read` | a fresh reader that states what a draft asks |
+| [Hermes Grounded Citations](https://hermes-agent.nousresearch.com/docs/user-guide/skills/bundled/research/research-grounded-citations) | `keep-sources` | a ledger script that rejects a quote not in the page |
+| [citefact](https://github.com/hearthresearch/citefact) | `check-sources` | a checker of verbatim quotes against the cited source |
+| [anti-slop-writing](https://github.com/adewale/anti-slop-writing) | `deslop-prose` | a style skill with pre-registered evals |
 
 ## Tests
 
