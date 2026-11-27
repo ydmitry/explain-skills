@@ -83,7 +83,9 @@ A counted contradiction blocks. A statement with no source does not: the writer 
 
 ## cold-read
 
-**"Can you understand this?" is a question a patient reader always passes.** So a fresh subagent, in the role of the least-informed person the text is for, says the text's one point in two sentences, where it found it, and what it had to guess.
+**"Can you understand this?" is a question a patient reader always passes.** So fresh subagents read it, in the role of the least-informed person the text is for.
+
+One gets only the first screen and says what point it gives. A second reads the whole text and says its one point in two sentences, where it found it, and what it had to guess.
 
 The read blocks on four things: the point is missed, the first screen does not hold it, a word of the point had to be guessed, or a text written for a decision names no next step. Everything else the reader lists is a minor gap.
 
@@ -141,6 +143,26 @@ Two things were changed on 2026-11-27 after these counts. `skimmable-writing` no
 A script looked each pointer up in the transcript the write-up was written from. Of the 83 pointers made with the rule it could not place 2, and both are right on reading. Where a transcript showed no line of any file, the writers made none up.
 
 The writer had a transcript and no files, so this does not show what a writer with tools does. It also does not show that the line a pointer names says what the sentence says.
+
+## The `cold-read` reader, run the way the skill runs it
+
+**Run as a session on Claude Sonnet that opens the file, the reader blocked 7 of 12 write-ups on each of two reads.** On Claude Haiku with the text inline it had blocked 12 of 12. Three runs on 2026-11-27 read 12 write-ups made with no skill, and each run's bars were written first.
+
+| Bar | One reader | Two readers |
+|---|---|---|
+| Two reads agree on block or pass for at least 10 of 12 write-ups | 8 of 12, not met | 10 of 12, met |
+| At most 9 of 12 blocked on each read | 7 and 7, met | 8 and 6, met |
+| "The first screen does not hold the point" rises on copies with the opening summary moved to the end | +0.05 against a bar of 0.42, not met | +0.10 against a bar of 0.34, not met |
+
+A guessed word, which had blocked 11 of 12 write-ups on Claude Haiku, was listed in 1 of 24 reads.
+
+The skill asks its reader to read the first screen before the rest. All 34 sessions of the one-reader run opened the whole document at once, so the skill now gives the first screen a reader of its own. The two columns are one round each, and no bar was set for the difference between them.
+
+## What the runs on that reader do not show
+
+**That the reader sees a first screen without the point is not shown.** In three of the ten copies the next section moved up and stated the same point, so the damage was too weak to tell.
+
+The limits: one model as reader and judge, 12 write-ups of four synthetic sessions, and a `claude -p` session with the tool `Read` standing in for a subagent. No write-up here is known to deserve a pass, so nothing shows that a block is right.
 
 ## What was not measured, or only on earlier forms
 

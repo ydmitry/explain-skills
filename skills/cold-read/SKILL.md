@@ -52,9 +52,16 @@ A read blocks when any of these holds; every gap is otherwise minor:
 
 0. Read last: make every other edit and check first. The read is of the text as it will be shown.
 1. Write the point you intended, in one sentence; keep it from the reader.
-2. Dispatch a fresh subagent with this prompt and nothing from the chat: `You are a cold reader: <the
+2. Dispatch two fresh subagents, each with its prompt and nothing from the chat. The first gets the first screen and
+   no more: save the document's first 26 lines as a file of its own, in a folder that does not hold the document
+   (a page: the visible text before its first section). Its prompt: `You are a cold reader: <the
    role, e.g. a product manager on the team, who was not in this work>. You are the reader; dispatch no one. Read
-   <absolute path> and follow "The read" in ${CLAUDE_SKILL_DIR}/SKILL.md. Reply with its lines only.`
+   <first-screen path>: it is the first screen of a document, and all of it that you get. Follow step 1 of "The
+   read" in ${CLAUDE_SKILL_DIR}/SKILL.md. Reply with the first screen line only.` The second reads the whole
+   document: `You are a cold reader: <the role, the same one>. You are the reader; dispatch no one. Read
+   <absolute path> and follow "The read" in ${CLAUDE_SKILL_DIR}/SKILL.md. Reply with its lines only.` Of its
+   lines, `first screen:` is dropped: the first reader's stands, since a reader who has the whole text cannot say
+   what the first screen alone gave.
 3. Compare its `point:` with your sentence; apply What blocks. Fix every blocking gap, and a minor one when its fix is a
    line, by adding (the point on the first screen, a gloss, a reason, the next step); cut only what a `cut:` names.
 4. After a blocking read and your fixes, one more read by a new subagent. Two reads at most; then show the document
