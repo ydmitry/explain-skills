@@ -399,3 +399,50 @@ class Measured(Folder):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReferenceExamples(unittest.TestCase):
+    """Every whole figure a reference shows passes the check it teaches."""
+
+    WORDS = {"new-words", "new-numbers", "value-not-drawn", "brief-incomplete"}  # an example has no text behind it
+
+    def test_every_whole_figure_in_the_references_passes_the_check(self):
+        import xml.etree.ElementTree as ET
+        failed = []
+        for ref in sorted((SKILLS / "draw-figures/references").glob("*.md")):
+            for n, block in enumerate(re.findall(r"```xml\n(.*?)```", ref.read_text(), flags=re.S), 1):
+                start = block.find("<svg")
+                if start < 0 or "</svg>" not in block:
+                    continue
+                svg = re.sub(r"\bfig-\d+\b", "fig-1", block[start:block.rindex("</svg>") + 6])
+                try:
+                    claim = " ".join(ET.fromstring(svg).get("aria-label").split())
+                except ET.ParseError as exc:
+                    failed.append(f"{ref.name} example {n}: not XML ({exc})")
+                    continue
+                with tempfile.TemporaryDirectory() as tmp:
+                    text = Path(tmp) / "text.md"
+                    text.write_text(f"# Title\n\nSome text.\n\nFigure: {claim}\n")
+                    figs = Path(tmp) / "figures" / "text"
+                    figs.mkdir(parents=True)
+                    (figs / "fig-1.svg").write_text(svg)
+                    (figs / "brief.md").write_text(f"# Figure brief: text.md\n\n## fig-1\nclaim: {claim}\nshape: the Gap\ndata: as drawn\nconstraints: none\n")
+                    _, out = run(F, "check", text)
+                for line in out.splitlines():
+                    kind = line.split(": ", 1)[-1].split(" ")[0]
+                    if line.startswith("PROBLEM") and kind not in self.WORDS:
+                        failed.append(f"{ref.name} example {n}: {line[:150]}")
+        self.assertEqual(failed, [], "\n" + "\n".join(failed))
+
+
+class RelativePaths(Folder):
+    def test_the_check_measures_when_the_text_is_given_by_a_relative_path(self):
+        self.draw()
+        code, out = run(F, "check", "text.md", cwd=self.root)
+        self.assertIn("measured=yes", out)
+        self.assertEqual(code, 0, out)
+
+    def test_preview_writes_pictures_into_a_relative_folder(self):
+        self.draw()
+        code, out = run(F, "preview", "text.md", "--out", "shots", cwd=self.root)
+        self.assertTrue((self.root / "shots" / "fig-1.png").exists(), out)

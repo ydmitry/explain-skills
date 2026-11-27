@@ -18,6 +18,10 @@ Go through the text claim by claim. **A claim gets a figure only when both tests
 
 Results and limits are easy to pass over: a row of a results table can hide a gap or a split, and a stated limit is often a threshold.
 
+**When many claims pass, draw the few the text's point rests on.** A table of results whose rows all pass stays a table: one figure for the row the text leads with says more than six alike.
+
+**A definition of a term gets no figure,** even when a picture of it comes to mind. It says what a word means and asserts nothing about the subject, so it fails the contrast test. The same holds for a list of terms and for a sentence on who owns or keeps something.
+
 A mark that already stands in the text and fails a test is not drawn. Say so in your report: its claim stays a sentence, and the mark comes out of the text.
 
 ## The shape follows the claim

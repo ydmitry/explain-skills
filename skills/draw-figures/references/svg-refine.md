@@ -66,9 +66,9 @@ const bubbleR = (v, vMax) => R_MAX * Math.sqrt(v / vMax);
        The value label must clear the LARGEST bubble's bottom edge — derive it, don't eyeball:
        baseline y = cy + R_MAX + gap = 40 + 28 + 20 = 88, and the viewBox height (100) contains it.
        (A hard-coded y=72 in an 80-tall box overlaps the r=28 circle, whose bottom is at 68.) -->
-  <circle cx="34"  cy="40" r="14" style="fill:var(--muted)"/><text x="34"  y="88" font-size="11"
+  <circle cx="34"  cy="40" r="14" style="fill:var(--muted)"/><text x="34"  y="88" font-size="12"
     text-anchor="middle" style="fill:var(--muted);font-family:var(--font-mono)">25</text>
-  <circle cx="150" cy="40" r="28" style="fill:var(--info)"/><text x="150" y="88" font-size="11"
+  <circle cx="150" cy="40" r="28" style="fill:var(--info)"/><text x="150" y="88" font-size="12"
     text-anchor="middle" style="fill:var(--muted);font-family:var(--font-mono)">100</text>
 </svg>
 ```
@@ -114,7 +114,7 @@ Reuse the Semantic-arrowheads vocabulary (`svg-shapes.md` S5) for the pointer (n
   <circle cx="244" cy="16" r="3.5" style="fill:var(--ok)"/>
   <!-- single direct annotation, not a legend -->
   <line x1="208" y1="14" x2="234" y2="16" style="stroke:var(--muted)" stroke-width="1" marker-end="url(#fig-3-pt)"/>
-  <text x="206" y="12" text-anchor="end" font-size="11"
+  <text x="206" y="12" text-anchor="end" font-size="12"
         style="fill:var(--ok-ink);font-family:var(--font-mono)">95% after fix</text>
 </svg>
 ```
@@ -158,35 +158,28 @@ The two tests that make this call claim by claim are in `SKILL.md`, "Which claim
 
 The bans for figures (no gradient; no violet, fuchsia or indigo in any slot; fonts only through `var(--font-body)` and `var(--font-mono)`) kill the *loudest* tells, not the quiet ones: the looks an LLM drifts into because they feel tasteful. This section names those looks for self-audit, gives a diff test for "would I draw this for any brief?", makes every decorative device earn its place, and caps deliberation on the draw step. It governs *judgment* around the figure file; the geometry lives in S4, semantic colour in S6, verification in S7.
 
-### Named AI-design cliche clusters (audit the whole cluster, not the accent)
+### The looks a figure drifts into
 
-LLM "good taste" collapses toward a handful of stable looks. Audit against the **full co-occurring cluster**, not any single ingredient — the ingredients are often individually fine and only read generic when they arrive together with nothing doing real work.
+A figure reads the tokens, so it cannot pick a ground, a typeface or a hue of its own: the loud tells are closed off. What is left is layout and shape, and three defaults that feel tasteful and say nothing:
 
-| Cluster | Co-occurring tells | Why it reads generic | Cheapest break |
-|---|---|---|---|
-| **1 · Editorial warm-minimal** | warm-cream bg **+** high-contrast serif *display* **+** terracotta as the only color move | the entire personality is one font and one accent; structure carries nothing | break ONE leg: give the second register a *semantic* job, or drop serif-display-as-personality, or go asymmetric |
-| **2 · Terminal noir** | near-black bg **+** a single acid-green or vermilion accent | "hacker dashboard" default; pure-black + neon is a vibe, not an encoding | off-limits here anyway: a figure reads the tokens, which give a light and a dark screen from the same names, so a hand-picked noir palette would fight both |
-| **3 · Faux-broadsheet** | broadsheet hairline rules **+** zero border-radius everywhere **+** dense newspaper columns | mimics a newspaper's authority without its editing; hairlines + 0-radius + columns is costume | let radius and rule-weight vary by role; widen the measure; stop the columns |
+- **Everything centred.** Every label `text-anchor="middle"`, every block on the middle axis. Centring is a default, not a decision. Left-align, or go asymmetric, unless the symmetry encodes something (a genuine before/after mirror does: see the S0 divider).
+- **One `rx` on every rect.** The same radius on every card, pill and frame flattens the hierarchy. Vary it or drop it: sharp corners for a fixed frame, soft for a state pill, and let the difference *mean* something.
+- **A row of equal boxes joined by arrows,** whatever the claim. When the boxes could be swapped without changing the picture, the shape is carrying nothing (S3: pick the shape from the claim).
 
-Two more tells that cut across all three:
-
-- **Excessive centered layouts.** Everything `text-align:center`, every block `margin:0 auto`. Centering is a default, not a decision. Force an **asymmetric, left-aligned editorial** structure unless symmetry encodes something (a genuine before/after mirror does — see the S0 divider).
-- **Uniform blanket `border-radius`.** One radius on every rect, card, and chip flattens hierarchy. **Vary or drop it**: sharp corners for structural frames, soft for interactive pills, and let the difference *mean* something.
-
-**The rule is conjunctive.** An accent over neutrals is good; it becomes the cliche only when the warm ground **and** a high-contrast serif display **and** accent-as-sole-decoration all co-occur with structure doing no work. So when an audit lands you in Cluster-1 territory, break one leg of the conjunction. The fastest break is to promote the second register to a **working semantic job** (S6): if green=pass/red=fail already, let `var(--info)` carry a third real state instead of garnishing.
+**Audit the cluster, not one ingredient.** Each of these is fine alone; the figure reads generic when they arrive together and the structure does no work. Break one: the fastest break is to give the second register a **working semantic job** (S6): if green = pass and red = fail already, let `var(--info)` carry a third real state instead of garnishing.
 
 ### Generate-default-then-diff genericness test
 
 Originality is checkable, not a vibe. Operationalize the swap test as a diff against your own autopilot:
 
 1. **Mentally re-run a *similar* brief**: "the default figure I'd draw for any pass/fail check."
-2. **Diff this illustration against that default.** Any part that matches the autopilot — the centered layout, the blanket radius, the lone terracotta, the boxes-and-arrows reflex — is a candidate for revision.
+2. **Diff this illustration against that default.** Any part that matches the autopilot — the centered layout, the blanket radius, the lone accent arrow, the boxes-and-arrows reflex — is a candidate for revision.
 3. **Revise the matching part and state what changed and why**, in one line, tied to *this* content. If you cannot name a content-driven reason, the change was decoration; revert it.
 
 A worked diff (state it this tersely):
 
 ```text
-default  → two centered cards, identical 8px radius, one terracotta arrow between them
+default  → two centered cards, identical 8px radius, one accent arrow between them
 this one → left card sharp-framed (the fixed contract), right card soft (the variable input);
            arrow is the failing→passing transition, so it's the ONE semantic-colored element.
 why      → radius now encodes fixed-vs-variable; color is reserved for the verdict, not chrome.
@@ -210,7 +203,7 @@ This is the planning-side twin of S2's isomorphism test ("delete all text — do
 Once the brief (S2), shape (S3), and coordinate frame (S4) are fixed, the actual *drawing* deserves almost no deliberation. Cap it:
 
 - **Commit to one concrete layout on first impulse.** Do not debate orientation or alternatives.
-- **Do not compute coordinates in prose loops** ("1840 is too wide, tighten to 1700, hmm 1680…"). You already have the geometry-constants header from S4 — derive from it and emit.
+- **Do not compute coordinates in prose loops** ("700 is too wide, tighten to 680, hmm 664…"). You already have the geometry-constants header from S4 — derive from it and emit.
 - **Do not narrate process** ("now I'll finalize the arrowheads…"). Emit the elements directly. Planning tokens spent here are output tokens lost.
 
 **IMPORTANT divergence from an auto-layout tool's "never re-check coordinates."** That rule is correct *only because such a tool auto-layouts*: a solver guarantees the geometry. We hand-author, so we **keep the check and the look at the preview** (S7; `SKILL.md`, "Draw what is marked", steps 5 and 6): draw decisively, then verify once. The economy is at the *authoring* step (don't ruminate while placing shapes), not at the *verification* step (always look at the result). Decisive draw + bounded verify, never timid draw + no verify.

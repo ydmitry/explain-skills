@@ -124,7 +124,7 @@ def brief(a) -> int:
         lines = path.read_text().rstrip("\n").split("\n")
     else:
         lines = [f"# Figure brief: {a.text.name}", "", f"text: {a.text}",
-                 "canvas: one or two widths for all the figures, 720 at most; each height from its content",
+                 "canvas: one or two widths for all the figures, 720 at most, 400 or less to show whole on a phone; each height from its content",
                  "palette: what each colour means in every figure, for example --ok pass, --error fail, --muted the state before"]
     for m in marks:
         heads = [i for i, line in enumerate(lines) if re.match(rf"##\s+{m['id']}\s*$", line)]
@@ -424,7 +424,7 @@ def in_browser(figs: list, work, out: Path = None):
             with sync_playwright() as p:
                 browser = p.chromium.launch()
                 page = browser.new_page(viewport={"width": 1440, "height": 2000}, device_scale_factor=2)
-                page.goto(page_path.as_uri())
+                page.goto(page_path.resolve().as_uri())
                 page.wait_for_timeout(200)
                 result = work(page)
                 browser.close()

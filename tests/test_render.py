@@ -241,3 +241,11 @@ class PageCheck(Folder):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RelativePaths(Folder):
+    def test_the_page_check_measures_when_the_paths_are_relative(self):
+        self.render()
+        code, out = run(C, "text.html", "text.md", cwd=self.root)
+        self.assertIn("measured=yes", out)
+        self.assertEqual(code, 0, out)

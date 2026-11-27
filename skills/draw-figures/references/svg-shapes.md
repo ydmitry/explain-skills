@@ -28,7 +28,7 @@
 **Read per-shape, not whole.** After the index (`svg-figures.md` S3) or its table "From the brief's
 shape name to its recipe" names your shape, read that section and only that section: the table quotes
 the heading word for word, and the grep in the header gives its line.
-Reading the whole file costs ~7.8k tokens for what a single shape needs.
+The whole file is several times what a single shape needs.
 
 Cross-references: `S0`–`S3` point to sections in `references/svg-figures.md` (the core file), `S4`
 to `references/svg-geometry.md`, `S6` to `references/svg-color.md`, `S7` to
@@ -78,7 +78,7 @@ will *show you* it should have been a spectrum.
     #fig-1 .q-win {fill:var(--ok-zone);stroke:var(--ok-line)}
     #fig-1 .q-axis{stroke:var(--muted);stroke-width:1.5}
     #fig-1 .q-name{font:600 12px var(--font-body);fill:var(--text)}
-    #fig-1 .q-ttl {font:600 11px var(--font-body);fill:var(--muted);letter-spacing:.5px}
+    #fig-1 .q-ttl {font:600 12px var(--font-body);fill:var(--muted);letter-spacing:.5px}
     #fig-1 .q-dot {fill:var(--info)}  /* plotted items = emphasis, not a verdict → --info, not the green */
   </style>
   <!-- quadrants: 120x120 each, focal cell first so it carries the accent -->
@@ -95,7 +95,7 @@ will *show you* it should have been a spectrum.
   <text class="q-name" x="124" y="204" text-anchor="middle">Fill-ins</text>
   <text class="q-name" x="244" y="204" text-anchor="middle">Time sinks</text>
   <!-- two real items populate the focal quadrant;
-       cx/cy are plotted points derived from a top-left box per S4 (S4.1 plotted-point exception) -->
+       cx/cy are plotted points derived from a top-left box per S4 (S4 §1 plotted-point exception) -->
   <circle class="q-dot" cx="110" cy="60" r="4"/>
   <circle class="q-dot" cx="150" cy="104" r="4"/>
   <!-- axis titles encode direction in words, no extra arrowheads -->
@@ -156,12 +156,12 @@ One axis, two poles, items at their **true** positions. Map a value `v` on a `[0
   <style>
     #fig-1 .s-axis{stroke:var(--muted);stroke-width:2}
     #fig-1 .s-dot {fill:var(--info)}
-    #fig-1 .s-lab {font:600 11px var(--font-body);fill:var(--text)}
-    #fig-1 .s-pole{font:11px var(--font-body);fill:var(--muted)}
+    #fig-1 .s-lab {font:600 12px var(--font-body);fill:var(--text)}
+    #fig-1 .s-pole{font:12px var(--font-body);fill:var(--muted)}
   </style>
   <line class="s-axis" x1="40" y1="44" x2="280" y2="44"/>
   <!-- plotted points: v=1.5 -> x76, v=4 -> x136, v=8.5 -> x244;
-       cx/cy derived from a top-left box per S4 (S4.1 plotted-point exception) -->
+       cx/cy derived from a top-left box per S4 (S4 §1 plotted-point exception) -->
   <circle class="s-dot" cx="76"  cy="44" r="4"/>
   <circle class="s-dot" cx="136" cy="44" r="4"/>
   <circle class="s-dot" cx="244" cy="44" r="4"/>
@@ -268,39 +268,41 @@ The before-after **Gap** and the **Semantic arrowheads** primitives come first: 
 ---
 ### Before / after "Gap" primitive
 
-The dashed-divider metaphor: two semantically filled blocks split by a dashed `<line>`, with the **gap itself annotated** so the whitespace carries the delta. Use this when the point is the change between two states; when the two sides are prose rather than a magnitude, give them as a table in the text.
+The dashed-divider metaphor: two semantically filled blocks split by a dashed `<line>`, with the **gap itself annotated** so the whitespace carries the delta. Annotate it only with a number the text states: a delta the text does not give is a composed label. Use this when the point is the change between two states; when the two sides are prose rather than a magnitude, give them as a table in the text.
 
 This is the one primitive worked **straight from the S4 constants header** — derive, then emit, so the literals below trace back to named constants instead of being typed:
 
 ```js
-// S4 geometry-constants header (§4.2), instantiated for this figure:
+// S4 §2 geometry-constants header, instantiated for this figure:
 const W = 320, H = 120, PAD = 16, GAP = 48;
 const COL  = (W - 2 * PAD - GAP) / 2;     // 120 — each block
 const colX = i => PAD + i * (COL + GAP);  // → 16, 184  (the two translate() x's below)
 const mid  = colX(0) + COL + GAP / 2;     // 160 — the dashed divider, centered in the gap
-// boxW(["60%"]) (§4.4) ≥ the 120-wide block at 22px, so neither numeral clips.
+// S4 §4: "60%" at 22px is about 3 × 22 × 0.6 = 40 wide, well inside the 120-wide block, so neither numeral clips.
 ```
 
 ```xml
 <!-- block x's (16, 184) and divider x (160) are emitted from colX()/mid above, not typed -->
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 320 120" role="img"
      aria-label="Coverage went from 60% before to 92% after — a 32-point gain.">
-  <!-- before: error-tinted block (zone fill, line border, ink text — all derived tokens) -->
+  <!-- before: the neutral block (S6: a state before is muted, never the error red, unless the text calls it a failure) -->
   <g transform="translate(16,28)">
-    <rect width="120" height="64" rx="8" style="fill:var(--error-zone); stroke:var(--error-line)"/>
+    <rect width="120" height="64" rx="8" style="fill:var(--muted-zone); stroke:var(--muted-line)"/>
+    <!-- numeral and its word are ONE label: one <text>, the word a tspan with its own x (S4 §8) -->
     <text x="60" y="30" text-anchor="middle" font-size="22" font-weight="700"
-          style="fill:var(--error-ink);font-variant-numeric:tabular-nums">60%</text>
-    <text x="60" y="50" text-anchor="middle" font-size="11" style="fill:var(--error-ink)">before</text>
+          style="fill:var(--muted-ink);font-variant-numeric:tabular-nums">60%<tspan
+          x="60" dy="20" font-size="12" font-weight="400">before</tspan></text>
   </g>
   <!-- the gap: dashed divider + delta label -->
   <line x1="160" y1="20" x2="160" y2="100" style="stroke:var(--border)" stroke-dasharray="4 4"/>
-  <text x="160" y="16" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--ok-ink)">+32 pts</text>
+  <text x="160" y="16" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ok-ink)">+32 pts</text>
   <!-- after: ok-tinted block -->
   <g transform="translate(184,28)">
     <rect width="120" height="64" rx="8" style="fill:var(--ok-zone); stroke:var(--ok-line)"/>
+    <!-- numeral and its word are ONE label: one <text>, the word a tspan with its own x (S4 §8) -->
     <text x="60" y="30" text-anchor="middle" font-size="22" font-weight="700"
-          style="fill:var(--ok-ink);font-variant-numeric:tabular-nums">92%</text>
-    <text x="60" y="50" text-anchor="middle" font-size="11" style="fill:var(--ok-ink)">after</text>
+          style="fill:var(--ok-ink);font-variant-numeric:tabular-nums">92%<tspan
+          x="60" dy="20" font-size="12" font-weight="400">after</tspan></text>
   </g>
 </svg>
 ```
@@ -315,29 +317,29 @@ Two routes. A small `<defs>` **marker vocabulary** — arrow / dot / diamond —
 <defs>
   <marker id="fig-1-arrow" viewBox="0 0 10 10" refX="9" refY="5"
           markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-    <path d="M0 0 L10 5 L0 10 z" style="fill:var(--info)"/>
+    <path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/>
   </marker>
   <marker id="fig-1-dot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6">
-    <circle cx="5" cy="5" r="4" style="fill:var(--info)"/>
+    <circle cx="5" cy="5" r="4" style="fill:var(--muted)"/>
   </marker>
   <marker id="fig-1-diamond" viewBox="0 0 10 10" refX="5" refY="5"
           markerWidth="9" markerHeight="9" orient="auto">
-    <path d="M5 0 L10 5 L5 10 L0 5 z" style="fill:var(--info)"/>
+    <path d="M5 0 L10 5 L5 10 L0 5 z" style="fill:var(--muted)"/>
   </marker>
 </defs>
-<line x1="20" y1="20" x2="120" y2="20" style="stroke:var(--info)" stroke-width="1.5" marker-end="url(#fig-1-arrow)"/>
+<line x1="20" y1="20" x2="120" y2="20" style="stroke:var(--muted)" stroke-width="1.5" marker-end="url(#fig-1-arrow)"/>
 ```
 
 Or, for **maximum portability** (no `<marker>`, no font dependency, renders identically anywhere it's pasted), draw the head as an inline `<path>` at the line's end. **Open vs filled is itself semantic** — open = weak/optional link, filled = hard/required:
 
 ```xml
 <!-- line ending at (120,20), pointing right -->
-<line x1="20" y1="20" x2="120" y2="20" style="stroke:var(--info)" stroke-width="1.5"/>
-<path d="M120 20 L112 16 L112 24 Z" style="fill:var(--info)"/>                          <!-- filled -->
-<path d="M112 16 L120 20 L112 24" fill="none" style="stroke:var(--info)" stroke-width="1.5"/> <!-- open -->
+<line x1="20" y1="20" x2="120" y2="20" style="stroke:var(--muted)" stroke-width="1.5"/>
+<path d="M120 20 L112 16 L112 24 Z" style="fill:var(--muted)"/>                          <!-- filled -->
+<path d="M112 16 L120 20 L112 24" fill="none" style="stroke:var(--muted)" stroke-width="1.5"/> <!-- open -->
 ```
 
-**The head is the SAME colour as its shaft: a marker is never an emphasis slot.** Define one
+The examples above draw the neutral edge, `var(--muted)` (S6). **The head is the SAME colour as its shaft: a marker is never an emphasis slot.** Define one
 marker per edge colour (the S0 pattern: `fig-1-ok` green, `fig-1-bad` red) or use
 `fill="context-stroke"` inside the marker so one definition inherits every edge's stroke. A blue
 head on a grey or green edge reads as a third, unexplained encoding; the usual cause is a single
@@ -364,7 +366,7 @@ rotate(-90 cx cy)   // move the start from 3 o'clock to 12 o'clock
 ```xml
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 120 120" role="img"
      aria-label="Eval coverage is 72%, up from the 60% baseline.">
-  <!-- circle-as-arc: cx,cy is the center of a top-left 104×104 box (S4.1 stated exception) -->
+  <!-- circle-as-arc: cx,cy is the center of a top-left 104×104 box (S4 §1 stated exception) -->
   <!-- track: full ring, neutral -->
   <circle cx="60" cy="60" r="52" fill="none" style="stroke:var(--border)" stroke-width="12"/>
   <!-- value: 72% of C=326.73 → 235.24 shown. linecap="butt" so the visible arc
@@ -373,8 +375,8 @@ rotate(-90 cx cy)   // move the start from 3 o'clock to 12 o'clock
           stroke-linecap="butt" stroke-dasharray="235.24 326.73"
           transform="rotate(-90 60 60)"/>
   <text x="60" y="60" text-anchor="middle" font-size="26" font-weight="700"
-        style="fill:var(--text);font-variant-numeric:tabular-nums">72%</text>
-  <text x="60" y="80" text-anchor="middle" font-size="11" style="fill:var(--muted)">coverage</text>
+        style="fill:var(--text);font-variant-numeric:tabular-nums">72%<tspan
+        x="60" dy="20" font-size="12" font-weight="400" style="fill:var(--muted)">coverage</tspan></text>
 </svg>
 ```
 
@@ -385,15 +387,17 @@ rotate(-90 cx cy)   // move the start from 3 o'clock to 12 o'clock
 **Quarter-arc wedge** (a filled sector, when you want a slice not a ring). Build it `M center L startEdge A r r 0 0 1 endEdge Z`; both arc flags are `0 1` for any sweep ≤ 180° going clockwise, so they never need thought. Place an arc label at the **sector centroid radius `d = 4r·sin(θ/2)/(3θ)`** along the wedge's bisector. (The familiar `4r/(3π)` is the *semicircle* centroid; using it on a narrower sector pulls the label too far toward the center. For a quarter, θ = π/2, so `d = 0.6·r`.)
 
 ```xml
-<!-- top→right quarter of a circle, center (60,60) = top-left box (8,8) + r=52 (S4.1 arc exception) -->
+<!-- top→right quarter of a circle, center (60,60) = top-left box (8,8) + r=52 (S4 §1 arc exception) -->
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 120 120" role="img"
      aria-label="One quarter of runs are still pending.">
   <path d="M60 60 L60 8 A 52 52 0 0 1 112 60 Z" style="fill:var(--info)"/>
   <!-- bisector −45°, d = 0.6·52 ≈ 31.2 → (60 + 31.2·cos45, 60 − 31.2·sin45) ≈ (82, 38) -->
   <!-- on-fill text: the bg token reads on an info fill in both themes (S6 contrast floors) -->
-  <text x="82" y="38" text-anchor="middle" font-size="10" style="fill:var(--bg)">25%</text>
+  <text x="82" y="38" text-anchor="middle" font-size="12" style="fill:var(--bg)">25%</text>
 </svg>
 ```
+
+**When the empty state is the claim ("0 of 20"), the `--border` track is too faint to carry it** (about 1.2:1 against the ground): draw the empty track in `var(--muted-line)` or prefer a row of cells, where an empty cell has an outline of its own.
 
 Numbers that go with the gauge's centre number belong in the text, as a sentence or a table, rather than rebuilt as numerals in SVG.
 
@@ -413,7 +417,7 @@ y_i = (h−2) − (v−min)/range × (h−4)      // −2/−4 keeps the stroke 
   <polyline fill="none" style="stroke:var(--muted)" stroke-width="1.5"
             stroke-linecap="round" stroke-linejoin="round"
             points="0,19.33 14.29,28 28.57,10.67 42.86,22.22 57.14,2 71.43,16.44 85.71,25.11 100,7.78"/>
-  <!-- three dots: cx,cy are x_i,y_i above (S4.1 plotted-point exception), pulled in by r so they clear the viewBox edge -->
+  <!-- three dots: cx,cy are x_i,y_i above (S4 §1 plotted-point exception), pulled in by r so they clear the viewBox edge -->
   <circle cx="14.29" cy="28"   r="1.5" style="fill:var(--error)"/> <!-- min   -->
   <circle cx="57.14" cy="2"    r="1.5" style="fill:var(--ok)"/> <!-- max   -->
   <circle cx="98.5"  cy="7.78" r="1.5" style="fill:var(--text)"/> <!-- endpoint: x pulled to 98.5 so the marker clears the right edge -->
@@ -433,26 +437,26 @@ y(v) = top + (max−v)/(max−min) × (bottom−top)   // here 0–100 → y∈[
 ```xml
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 360 200" role="img"
      aria-label="After the fix, coverage jumped 60→92 while latency, flake rate and cost barely moved.">
-  <text x="120" y="14" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--muted)">BEFORE</text>
-  <text x="240" y="14" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--muted)">AFTER</text>
+  <text x="120" y="14" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">BEFORE</text>
+  <text x="240" y="14" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--muted)">AFTER</text>
 
   <!-- ghosted categories: one hue, dropped opacity (S8 §3) — never a second color -->
-  <g style="stroke:var(--muted); fill:var(--muted)" opacity="0.5" stroke-width="1.5" font-size="10">
+  <g style="stroke:var(--muted); fill:var(--muted)" opacity="0.5" stroke-width="1.5" font-size="12">
     <line x1="120" y1="52"  x2="240" y2="92"/>   <!-- latency 80→55 -->
     <line x1="120" y1="132" x2="240" y2="160.8"/><!-- flake   30→12 -->
-    <line x1="120" y1="108" x2="240" y2="103.2"/><!-- cost    45→48 -->
+    <line x1="120" y1="108" x2="240" y2="112.8"/><!-- cost    45→42 -->
     <text x="112" y="55"  text-anchor="end">latency 80</text>
     <text x="112" y="135" text-anchor="end">flake 30</text>
     <text x="112" y="111" text-anchor="end">cost 45</text>
-    <text x="248" y="95">55</text><text x="248" y="163.8">12</text><text x="248" y="106.2">48</text>
+    <text x="248" y="95">55</text><text x="248" y="163.8">12</text><text x="248" y="115.8">42</text>
   </g>
 
   <!-- highlighted category: coverage 60→92, y = 84 → 32.8; rose = positive → the ok token -->
   <line x1="120" y1="84" x2="240" y2="32.8" style="stroke:var(--ok)" stroke-width="2.5"/>
-  <!-- endpoint dots: cx,cy are the line ends, y from y(v) above (S4.1 plotted-point exception) -->
+  <!-- endpoint dots: cx,cy are the line ends, y from y(v) above (S4 §1 plotted-point exception) -->
   <circle cx="120" cy="84" r="2.5" style="fill:var(--ok)"/><circle cx="240" cy="32.8" r="2.5" style="fill:var(--ok)"/>
-  <text x="112" y="87"   text-anchor="end" font-size="10" font-weight="700" style="fill:var(--ok-ink)">coverage 60</text>
-  <text x="248" y="35.8" font-size="10" font-weight="700" style="fill:var(--ok-ink)">92</text>
+  <text x="112" y="87"   text-anchor="end" font-size="12" font-weight="700" style="fill:var(--ok-ink)">coverage 60</text>
+  <text x="248" y="35.8" font-size="12" font-weight="700" style="fill:var(--ok-ink)">92</text>
 </svg>
 ```
 

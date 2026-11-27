@@ -104,7 +104,7 @@ Gate 1.5 below; the catalog above matches them to a fix.
 | `extra-file` | A `fig-N.svg` has no mark: remove the file or restore the mark. |
 | `mark-not-alone` | Give the `Figure:` line a paragraph of its own, with an empty line above and below it. |
 | `mark-too-short` | Write the claim into the mark as one sentence of four words or more, never the medium ("Figure: coverage chart"). |
-| `not-xml` | Write `&amp;` for `&` and `&lt;` for `<` in a label, and close every tag. |
+| `not-xml` | Write `&amp;` for `&` and `&lt;` for `<` in a label, close every tag, and keep two hyphens in a row out of a comment (write a token's name there without its `--`). |
 | `no-xmlns` | Add `xmlns="http://www.w3.org/2000/svg"` to the root `<svg>`. |
 | `no-viewbox` | Give the root a `viewBox` of four numbers, `0 0 W H`. |
 | `too-wide` | Draw in a `viewBox` 720 wide or less: resize, re-band or split the figure. |
@@ -128,7 +128,7 @@ Gate 1.5 below; the catalog above matches them to a fix.
 | `brief-block-missing` | Add a `## fig-N` block for the mark, with `claim:`, `shape:`, `data:` and `constraints:` (S2). |
 | `brief-claim-differs` | Copy the mark's sentence into `claim:`; to change the claim, change the mark in the text first. |
 | `brief-incomplete` | Fill `shape:` with a name from the S3 table, and `data:` with every label, value and unit the figure shows (S2). |
-| `new-words`, `new-numbers` | Use the text's own word or number. If the figure truly needs one the text lacks, add it to the text. |
+| `new-words`, `new-numbers` | Use the text's own word or number. One taken from a source the text points at goes on the brief's `data:` line, with its place in parentheses (S2). If the figure truly needs a word neither has, add it to the text. |
 | `value-not-drawn` | Draw the value. If it will not fit, the layout is wrong (resize, re-band, split the figure); never drop it from `data:` (S2). |
 
 ---
@@ -147,7 +147,7 @@ This extends steps 5 and 6 of `SKILL.md`, "Draw what is marked", into a structur
 Lint only what is **knowable from the source** so the check is false-positive-free, then spend the vision round on aesthetics alone. `figures.py check TEXT` reads this tier from each file's source on every run, with or without playwright; its findings and their fixes are in the table "Findings read from the source" above. The items below that it does not report stay a checklist you run by hand, and so do the measured ones when the check prints `measured=no`.
 
 - [ ] Every coordinate sits inside the declared `viewBox` (nothing clipped) — account for `stroke-width`/`marker` overhang at edges.
-- [ ] Every `url(#id)` (marker, gradient, clip, pattern) resolves to an id actually defined in `<defs>`.
+- [ ] Every `url(#id)` (marker, clip, pattern) resolves to an id actually defined in `<defs>`.
 - [ ] All ids are unique across the **whole document**: figures shown inline in one page share it, so duplicate ids across figures silently collide and later refs resolve to the FIRST def. Prefix per figure (`fig-1-`, `fig-2-`).
 - [ ] Root `<svg>` has `role="img"` and an `aria-label` that states the **finding**, not the medium: the mark's sentence, word for word.
 - [ ] No `NaN`, no negative coordinates, no zero/negative `width`/`height`.
@@ -180,7 +180,7 @@ Lint only what is **knowable from the source** so the check is false-positive-fr
 - [ ] Every loop-back/return edge has `marker-end`, its own label, and an elbow route through a
       corridor — it crosses no node interior and no other edge (S4 §9).
 
-**Rule of thumb:** every id you write carries the figure's prefix, `fig-N-`. Grep the finished files for `id="` and confirm no bare, repeatable name (`arrow`, `grad`, `clip`) appears in any of them.
+**Rule of thumb:** every id you write carries the figure's prefix, `fig-N-`. Grep the finished files for `id="` and confirm no bare, repeatable name (`arrow`, `clip`, `hatch`) appears in any of them.
 
 ### Gate 1.5 — Measured geometry lint (`figures.py check`, with playwright)
 
@@ -199,7 +199,7 @@ The checklist above estimates; this gate **measures**. When the `playwright` pac
 | **WARN** | `text-collision` near-touch (cross-parent) | 0 ≤ sep < 3 u |
 | **WARN** | `split-label` — a colliding pair that is really ONE logical label split across same-parent siblings (stacked lines at normal leading, or value+unit on one baseline): merge into tspans (S4 §8). Reclassed out of the PROBLEM tier — em-boxes of stacked 12px lines measure gap < 0 while the ink never touches | stacked: sep > −4 u; inline: sep ≥ 0 |
 | **WARN** | `arrowhead-hidden` — a `marker-end` endpoint inside an opaque shape painted after the edge: the decoration-under-nodes z-order (S4 §6) makes the head invisible | ≥ 1 u inside |
-| **WARN** | `node-gap` — two manifest-resolved node boxes touch or sit < 6 u apart: ports degenerate, no routing corridor (S4 §9 "nodes never touch") | gap < 6 u |
+| **WARN** | `node-gap` — two manifest-resolved node boxes touch or sit < 6 u apart: ports degenerate, no routing corridor (S4 §9 "nodes never touch"; the gutter to draw is 24 u) | gap < 6 u |
 | **WARN** | `zone-invisible` — a wide zone/band rect whose composited fill differs from its backdrop by < 8 RGB per channel with no visible stroke (bands: even with one): the claim-carrying zone doesn't exist in the pixels (S6 "attenuate once") | Δ < 8 |
 | **WARN** | `edge-not-in-manifest` — a drawn arrowed edge matching no manifest entry (invented edge); report names it by nearest labels ("gamma → beta"). Legend/key swatches (a `g.legend` group, or short labeled swatch lines) are excluded — a key entry is not topology | — |
 | **WARN** | `manifest-missing` — figure has arrowed edges but no S4 §9 manifest; `manifest-name-unresolved` / `manifest-name-ambiguous` — manifest present but not checkable | — |
@@ -276,13 +276,12 @@ The tiers line up with the two gates above: **Tier 1 is Gate 1** (parse/legal: w
 ### Authoring-build discipline (prevents defects upstream)
 
 - **Incremental scaffold-then-render.** Draw the skeleton/anchor shapes, render, then add **one labeled element at a time**, re-rendering — so the breaking coordinate is isolated at its source instead of in a finished tangle.
-- **Repair by edit, never by redraw.** Fix a figure with edits to the elements a finding names, a few at a time. When one finding repeats across most labels (`text-too-small` on every text), the cause is one number (the display scale: viewBox width against shown width), so change that once. Do not re-emit a whole figure to change sizes or positions: an SVG with its coordinates is 10-40k output tokens, and a model call that long can run past a time limit, be cut and be replayed, which pays for the whole figure again.
-- **Multi-scale render strip.** Render the SAME SVG at its real target sizes side by side (e.g. 64 / 32 / 16 px) to catch vanishing strokes and lost detail before iterating: `<svg width="64" .../><svg width="32" .../><svg width="16" .../>` sharing one `viewBox`.
-- **Loop budget, capped at ≤2.** Concept illustrations are **diagram-class**, so they earn **1–2 vision rounds** — and the **≤2-round cap (Gate 2) overrides** the higher 3–5 rounds a scene might earn rather than supplementing it. No figure here earns more than 2 rounds; if it still fails after round 2, escalate (structured failure object) instead of looping again.
+- **Repair by edit, never by redraw.** Fix a figure with edits to the elements a finding names, a few at a time. When one finding repeats across most labels (`text-too-small` on every text), the cause is one number, so change that once. Do not write a whole figure again to change sizes or positions: every coordinate is typed anew, and each is a new chance of a slip.
+- **Loop budget: two looks.** A figure earns one or two rounds of look and fix (Gate 2). If it still fails after the second, escalate (structured failure object) instead of looping again.
 
 ### Structured failure object (defect -> self-repair retry)
 
-When a gate fails, emit a machine-actionable object so the defect becomes a bounded self-repair retry rather than a vague "review it". Borrow the **structure**, never any CLI:
+When a gate fails, emit a machine-actionable object so the defect becomes a bounded self-repair retry rather than a vague "review it":
 
 ```json
 {

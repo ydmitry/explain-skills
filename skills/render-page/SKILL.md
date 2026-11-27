@@ -61,6 +61,8 @@ The measured part needs the `playwright` package. Without it the check prints `m
 
 **A figure is shown at the size it was drawn, never larger.** On a narrow screen it shrinks to four fifths of that size and then scrolls sideways inside its own frame, so its labels stay readable and the page itself never scrolls sideways.
 
+A figure about 400 units wide or less shows whole on a phone. The check does not report a wider one.
+
 ## The look of the page
 
 **The colours and fonts are the tokens in `assets/tokens.css`,** the same file `draw-figures` holds, so a figure and the page around it turn dark together. The layout is `assets/page.html`.

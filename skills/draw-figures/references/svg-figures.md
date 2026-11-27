@@ -37,7 +37,7 @@ The skill's list of shapes names each shaped claim (`SKILL.md`, "Which claims ge
 | Shape name in the brief | `svg-shapes.md` heading to read, or the build path |
 |---|---|
 | `n-of-m fill` | `Ring / arc gauge from one number` (part-of-whole, "3 of 8") |
-| `filled track` | `Ring / arc gauge from one number` (the value-fills-a-fixed-track primitive) |
+| `filled track` | *no catalog entry: a straight track*, as the example under "`currentColor` + class recolour" in `svg-color.md` (S6) draws it: a track `<rect>` and a fill `<rect>` of `value × track width` |
 | `threshold meter` | *no catalog entry: build from S4* (`<rect>` track + fill + a threshold rule and its label) |
 | `zones-with-wall` | *no catalog entry: build from S4 and the S6 zone tints* (tint **plus** a boundary at each end) |
 | `paired diff` | `Comparison pair` (or the Gap primitive, S5: `Before / after "Gap" primitive`) |
@@ -151,7 +151,7 @@ What makes this more than a generic diagram:
 ### viewBox and restraint
 
 - Use **`viewBox="0 0 W H"`, never a typed `width`/`height`**: one unit is one CSS pixel at full size, so 12-unit text is 12px text. The integer coordinate space keeps geometry deterministic (S4). A page shows a figure at that size or smaller, never larger.
-- **Width 720 at most.** That is the width of a page's text column. A figure that needs less is drawn narrower; a text read mostly on a phone gets figures about 360 wide, with their bands stacked.
+- **Width 720 at most.** That is the width of a page's text column. A figure that needs less is drawn narrower. **On a phone a figure wider than about 400 units does not show whole:** a page shrinks it to four fifths and then scrolls it sideways in its frame, and the check reports neither. A text that will be read on a phone gets figures 400 wide or less, with their bands stacked; say the width on the brief's `canvas:` line.
 - **Token-driven, one calm emphasis over neutrals.** The only saturated hues are the semantic ones, and emphasis that carries no verdict uses `var(--info)` (see the S6 accent rule). No violet or fuchsia in any slot.
 - **Static.** No SMIL (`<animate>`), no motion, no interaction.
 
@@ -179,7 +179,7 @@ constraints: pass on the left, drift on the right; the changed character is the 
 
 - **`claim:` is the mark's sentence.** The script copies it, and the check compares it with the mark and with the figure's `aria-label`. To change it, change the mark in the text.
 - **`shape:`** is a name from the table in S3.
-- **`data:` is load-bearing.** It lists every label, value and unit the figure shows, copied and never retyped from memory, with where each stands in parentheses: a line of the text, or a row of a `keep-sources` folder. What stands in parentheses is a pointer only: the check takes no label and no number from it, and does not look it up. A brief without a concrete example ("60% → 95%", `confirm?: boolean`) lets you draw a plausible diagram of nothing.
+- **`data:` is load-bearing.** It lists every label, value and unit the figure shows, copied and never retyped from memory, with where each stands in parentheses: a line of the text, or a row of a `keep-sources` folder. What stands in parentheses is a pointer only: the check takes no label and no number from it, and does not look it up. A brief without a concrete example ("60% → 95%", `confirm?: boolean`) lets you draw a plausible diagram of nothing. Every number outside the parentheses counts as a value the figure must show, so write "the top row", not "row 1", when you describe the layout there.
 - **`constraints:`** says what must and must not be shown: which side is which, which element is marked, what stays out.
 
 **The data line is the list the check ticks.** Every number on it must be drawn, and every number and word drawn must stand in the text or in the block. A value you leave out "to reduce clutter" is a fidelity failure the reader cannot detect, which makes it worse than clutter. If an item really will not fit, the layout is wrong (resize, re-band, split the figure): the item is not optional.
@@ -204,11 +204,16 @@ Before you choose shapes, name the **relationship or behaviour** in the idea and
 
 **Hard rule: each major concept of a text uses a DIFFERENT metaphor.** A text where every figure is the same row of cards has thrown away the one thing a drawn figure buys: that the *shape itself* is information. If three claims all want "the Gap", two of them are probably the same claim, or two of them should stay sentences.
 
-A `shape: the Gap` brief renders as two states on a shared baseline, split by a dashed divider, with one arrow that crosses the gap to assert the movement. The load-bearing part of such a figure (the marker is defined as in the S5 Semantic arrowheads, `svg-shapes.md`):
+A `shape: the Gap` brief renders as two states on a shared baseline, split by a dashed divider, with one arrow that crosses the gap to assert the movement. The load-bearing part of such a figure (the marker is the one of the S5 Semantic arrowheads, `svg-shapes.md`, in the colour of its shaft):
 
 ```xml
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-2" viewBox="0 0 720 220" role="img"
      aria-label="Test coverage rose from 60% before the fix to 95% after it.">
+  <defs>
+    <marker id="fig-2-rise" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/>
+    </marker>
+  </defs>
   <line x1="360" y1="36" x2="360" y2="184" style="stroke:var(--border)" stroke-dasharray="4 4"/><!-- the Gap -->
   <rect x="130" y="98" width="70" height="72"  rx="4" style="fill:var(--muted)"/><!-- before: 60% -->
   <rect x="520" y="56" width="70" height="114" rx="4" style="fill:var(--ok)"/><!-- after: 95% -->
@@ -267,8 +272,8 @@ Here is the positive case: a before/after split where the dashed Gap and the fil
      aria-label="Before the fix 3 of 8 checks passed; after the fix all 8 pass.">
   <!-- the Gap: this dashed divider is the claim, not decoration -->
   <line x1="160" y1="12" x2="160" y2="108" style="stroke:var(--border)" stroke-dasharray="4 4"/>
-  <text x="80"  y="24" text-anchor="middle" font-size="11" style="fill:var(--muted)">Before</text>
-  <text x="240" y="24" text-anchor="middle" font-size="11" style="fill:var(--muted)">After</text>
+  <text x="80"  y="24" text-anchor="middle" font-size="12" style="fill:var(--muted)">Before</text>
+  <text x="240" y="24" text-anchor="middle" font-size="12" style="fill:var(--muted)">After</text>
   <!-- before: track + 3/8 partial fill -> 3/8 * 112 = 42 -->
   <rect x="24" y="40" width="112" height="20" rx="4" style="fill:var(--bg); stroke:var(--border)"/>
   <rect x="24" y="40" width="42"  height="20" rx="4" style="fill:var(--error)"/>

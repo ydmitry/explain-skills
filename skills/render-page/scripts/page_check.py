@@ -121,7 +121,7 @@ def measure(page_path: Path):
                 page = browser.new_page(viewport={"width": width, "height": 900})
                 errors = []
                 page.on("pageerror", lambda e: errors.append(str(e).splitlines()[0]))
-                page.goto(page_path.as_uri())
+                page.goto(page_path.resolve().as_uri())
                 page.wait_for_timeout(150)
                 over = page.evaluate("""() => {
                     const w = document.documentElement.clientWidth, out = [];

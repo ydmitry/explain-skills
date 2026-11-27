@@ -91,7 +91,7 @@ Before the first `x`, sketch the grid on paper: how many columns, how many rows,
 
 - **Snap** every `x/y/w/h` to one base unit (here `PAD/GAP = 24/16`). Off-grid pixels read as misalignment.
 - **Same-role elements share an axis.** Both "PASS" pills sit at the same `y`; both column headers share a baseline. If two things mean the same kind of thing, one of their coordinates is identical — `colX(i)`, not two typed numbers.
-- **Reserve ~80px routing corridors** between rows for connectors and arrowheads so a `<line>` + marker never collides with the box below it.
+- **Leave room where an edge runs.** Two nodes joined by an arrow stand at least 24 units apart, enough for the shaft and its 7-unit head. Where an elbow or a loop-back edge turns between two rows, or an edge carries a label, reserve a corridor of about 80 units, so a `<line>` + marker never collides with the box below it.
 
 ### 4. Char-width box sizing, computed up front
 
@@ -212,7 +212,7 @@ string by padding its `x` with guessed pixels (the single most common misalignme
   `paint-order: stroke; stroke: var(--surface); stroke-width: 3px;` on the `<text>`. The
   cartography trick keeps the label readable through the crossing. Corridors (§3) remain the first
   choice; the halo is the sanctioned fallback — and a halo'd label touching a line is not a defect.
-- **Mixed sizes align on the baseline, not the top.** A 26px numeral and its 11px unit share the
+- **Mixed sizes align on the baseline, not the top.** A 26px numeral and its 12px unit share the
   same `y` — baselines align typographically; tops never do.
 - **Number columns:** `text-anchor="end"` on one shared right edge +
   `style="font-variant-numeric:tabular-nums"` — digits align with zero per-row nudging.
@@ -257,10 +257,10 @@ const A = box(24, 40, 120, 48), Bx = box(280, 40, 120, 48);
   back" is how re-entry arrows end up slicing through node interiors with their heads buried under
   a box (the check reports both: `edge-through-node` as a `PROBLEM`, `arrowhead-hidden` as a
   `WARN`).
-- **Nodes never touch.** Sibling node boxes keep a gutter of at least 24u (§3 corridors). Two boxes
+- **Nodes never touch.** Sibling node boxes keep a gutter of at least 24u (§3). That is the rule to draw by; the check warns only under 6u (`node-gap`), where the drawing is already broken. Two boxes
   sharing a border make their facing ports the SAME line: an edge starting there "belongs" to both
   nodes, the manifest diff can no longer tell them apart, and any edge between them has zero
-  routing room (check: `node-gap`). If two boxes are conceptually fused, draw ONE box with two
+  routing room. If two boxes are conceptually fused, draw ONE box with two
   labels inside it.
 - **Edge manifest: verbalize the topology as an auditable artifact, then diff it.** Every figure
   with arrowed edges carries a manifest comment, the first child of the `<svg>`, listing each edge
@@ -270,7 +270,10 @@ const A = box(24, 40, 120, 48), Bx = box(280, 40, 120, 48);
   an entry the check cannot parse silently disables the only test that catches reversed and
   mis-routed arrows on that edge, so the check reports an unparsable entry as a `PROBLEM`.
   Legend/key swatch arrows are not
-  topology — keep them inside a `<g class="legend">` and leave them out of the manifest. Names must
+  topology — keep them inside a `<g class="legend">` and leave them out of the manifest. A pointer
+  that annotates one mark (a short arrow from a label to the point it names) joins no two nodes
+  either and gets no entry: when it is the figure's only arrow the check still prints
+  `manifest-missing`, and "an annotation pointer, not an edge" is the reason to give. Names must
   resolve mechanically, in this order: an element `id` inside the `<svg>`, then a `data-name`, then
   a `<text>` whose exact content is the name. Every id starts with `fig-N-`, so name each node rect
   with a `data-name` matching its manifest name, as the S0 skeleton does, or give it a label whose

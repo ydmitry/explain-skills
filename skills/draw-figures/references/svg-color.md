@@ -52,6 +52,7 @@ Tag each thing a figure shows with a valence in the brief, *before* drawing, and
 | risk · partial | `var(--warn)` | a mark only on a light screen: see the contrast floors below |
 | baseline · not yet run · the state before | `var(--muted)` | with `var(--border)` hairlines and `var(--bg)` tracks |
 | secondary register · emphasis | `var(--info)` | see the accent rule |
+| an edge that carries no verdict: a step to the next step, a request, a pointer | `var(--muted)` shaft and head | `var(--border)` is too faint for an edge (under 3:1): it is for dividers and outlines |
 
 **The accent rule:** inside a figure, keep the valence hues (`--ok` / `--warn` / `--error`) for verdicts only, so green always means pass or positive. For emphasis that carries no verdict (standalone pointer glyphs, a highlighted series, plotted dots, never the markers of meaning-carrying edges, whose heads match their shafts per S5) use `var(--info)` or `var(--muted)` ink, never a valence hue: an emphasis mark coloured like a verdict reads as a verdict you did not intend. And the valence table binds in both directions: a *baseline* or *before* state is `var(--muted)`, never `var(--error)`. Painting the "before" bar red asserts a failure the brief never claimed.
 
@@ -108,7 +109,8 @@ Draw geometry with `class=` (or `fill="currentColor"`), and define what those cl
   </defs>
 
   <!-- before: 60% of a 280-wide track -->
-  <!-- label text uses an --*-ink token (4.5:1 and more); the solid --ok is for the FILL only -->
+  <!-- label text uses an ink token (4.5:1 and more); the solid ok token is for the FILL only.
+       Two hyphens in a row never stand inside a comment: the file stops being XML -->
   <rect class="track"  x="20" y="28" width="280" height="16" rx="8"/>
   <rect class="before" x="20" y="28" width="168" height="16" rx="8"/>
   <text class="lbl ink-mute" x="20" y="22">before · 60%</text>
