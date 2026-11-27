@@ -110,7 +110,7 @@ It is not measured.
 
 ## Checks that need no human reader
 
-**Eight checks on 2026-11-26 and 2026-11-27 show no gain from `skimmable-writing` over no skill.** They ran on 80 saved write-ups of the same four sessions: 40 made with no skill, and 40 made with the skill as it stood on 2026-11-25.
+**Ten checks on 2026-11-26 and 2026-11-27 show no gain from `skimmable-writing` over no skill.** They ran on 80 saved write-ups of the same four sessions: 40 made with no skill, and 40 made with the skill as it stood on 2026-11-25.
 
 A model judge counts as proven only after it moved the right way on damage that a script had planted.
 
@@ -118,7 +118,7 @@ A model judge counts as proven only after it moved the right way on damage that 
 |---|---|---|
 | Does the skill keep one idea a section better? | No room: with no skill only 5 of 20 write-ups had a section flagged, and the bar for room was 7. | a model judge, proven |
 | Does a model prefer the skill's write-up? | No: of 14 pairs it picked each side 3 times and gave no pick 8 times. It picked the text shown first in 27 of 40 calls. | a model asked in both orders, proven |
-| Does the skill put key points nearer the top? | Not measured. The score failed two proofs, the second by 0.02 against its bar. | a model judge, not proven |
+| Does the skill put key points nearer the top? | Not decided, and no gain: the first 300 words of headings, bold text and first sentences state 4.20 of 12 key points with the skill and 4.75 without, on 20 write-ups each. The gap is about the size of chance and comes from one session. | a model judge, proven at the third try |
 | Does the `cold-read` reader see planted damage? | Not shown, for any of three conditions. | the skill's reader on Claude Haiku, with the text inline |
 | Does that reader block fewer write-ups made with the skill? | No gap shown: it blocked 19 of 20 made with the skill and 18 of 20 made without. | the same reader, not proven |
 
