@@ -10,8 +10,7 @@ lists what stopped it. "Can you understand this?" is a question a patient reader
 you found it, what you had to guess" is not.
 
 A review asks whether the document is right; a cold read asks whether a reader without the chat gets its point.
-illustrate's cold-read audit is the author's checklist while building a page; this is the test afterwards, by a reader.
-A page drafted in Markdown is read as the draft, before it is rendered: fixing it there is cheaper.
+A text that will be shown as a page is read as the Markdown, before `render-page` renders it: fixing it there is cheaper.
 
 ## The read
 

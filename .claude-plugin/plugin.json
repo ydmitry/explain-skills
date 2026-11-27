@@ -1,6 +1,6 @@
 {
   "name": "explain",
-  "description": "Five skills for a text a person reads alone and has to trust: write Markdown that is easy to skim, clean its sentences of slop, keep the sources while the work runs, have a second reader check the text against them, and test it on a reader with no context.",
+  "description": "Skills for a text a person reads alone and has to trust: write Markdown that is easy to skim, clean its sentences of slop, keep the sources while the work runs, have a second reader check the text against them, test it on a reader with no context, draw a figure for a claim whose structure is the point, and render the text as one HTML page.",
   "author": {
     "name": "Dmytro Yaremenko"
   },
@@ -16,6 +16,10 @@
     "markdown",
     "deslop",
     "sources",
-    "fact-check"
+    "fact-check",
+    "figures",
+    "svg",
+    "diagram",
+    "html-page"
   ]
 }

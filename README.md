@@ -1,6 +1,8 @@
 # explain-skills
 
-Five Claude Code skills for a text that a person reads alone and has to trust: one writes it so that it is easy to skim, one cleans its sentences, two keep it true to its sources, and one tests it on a reader with no context.
+Seven Claude Code skills for a text that a person reads alone and has to trust.
+
+Five work on the words: one writes the text so that it is easy to skim, one cleans its sentences, two keep it true to its sources, and one tests it on a reader with no context. Two show it: one draws a figure for a claim whose structure is the point, and one renders the text as a page.
 
 **Each skill owns one thing and leaves the rest alone,** so they can run one after another on the same text, and each also works without the others.
 
@@ -11,8 +13,10 @@ Five Claude Code skills for a text that a person reads alone and has to trust: o
 | After writing | `deslop-prose` | the sentences: removes what signals without saying; adds nothing |
 | Before showing | `check-sources` | a second reader reports what the sources contradict |
 | Before showing | `cold-read` | a reader with no context says the point and what stopped them |
+| After the readers | `draw-figures` | draws each figure the text marks, with labels taken from the text |
+| Last, for a page | `render-page` | turns the text into one HTML page that says what the text says |
 
-A sixth, `explain-well`, owns no part of the text: it is a command that runs the five in this order.
+An eighth, `explain-well`, owns no part of the text: it is a command that runs the seven in this order.
 
 ## Install
 
@@ -27,9 +31,9 @@ claude plugin marketplace add ydmitry/explain-skills
 claude plugin install explain@explain-skills
 ```
 
-The skills are then `/explain:skimmable-writing`, `/explain:deslop-prose`, `/explain:keep-sources`, `/explain:check-sources` and `/explain:cold-read`. Claude also picks one up by itself when a request fits its description. `/explain:explain-well` runs them all in order, and only you can call it.
+The skills are then `/explain:skimmable-writing`, `/explain:deslop-prose`, `/explain:keep-sources`, `/explain:check-sources`, `/explain:cold-read`, `/explain:draw-figures` and `/explain:render-page`. Claude also picks one up by itself when a request fits its description. `/explain:explain-well` runs them all in order, and only you can call it.
 
-To use one without the plugin, copy its folder from `skills/` into `~/.claude/skills/`. **The scripts need Python 3 and nothing else.**
+To use one without the plugin, copy its folder from `skills/` into `~/.claude/skills/`. **The scripts need Python 3 and nothing else.** Two of them, in `draw-figures` and `render-page`, also measure in a headless browser when the `playwright` package is installed, and say so when it is not.
 
 ## skimmable-writing
 
@@ -91,9 +95,33 @@ The read blocks on four things: the point is missed, the first screen does not h
 
 It has no script. A review asks whether the text is right; this asks whether a reader without the chat gets its point.
 
+## draw-figures
+
+**A figure is for a claim whose structure is the point, and the text owns every word of it.** A line `Figure:` with one sentence marks the figure in the text. The two readers read that sentence with the rest, and it becomes the caption.
+
+The skill says which claims get a figure: there must be a second state to contrast, and the drawing must still argue the claim with its labels deleted. It names a shape for each kind of claim, and its references hold the drawing rules: geometry derived from constants, colour by meaning, and a catalog of shapes.
+
+A figure is one SVG file that names no colour. It reads tokens, so it follows a light and a dark screen.
+
+It ships `scripts/figures.py`:
+
+- `brief` writes a plan with a block for each mark: the shape, and every label and value with the place it was taken from.
+- `check` lists a typed colour, a label that is not the mark's sentence, and a word or a number that stands neither in the text nor in the plan. With `playwright` it also measures: labels that collide, a box that leaves the canvas, an arrow that lands on nothing.
+- `preview` writes a picture of each figure, and `place` finishes the files and writes an image line into the text.
+
+## render-page
+
+**The page is the text, shown: the same words in the same order, made by a script.** To change the page you change the text and render again.
+
+`scripts/render.py` turns the Markdown into one HTML file that carries its figures and pictures inside it and asks the network for nothing. What it cannot show it refuses with the line: raw HTML, a `mermaid` block, a picture from the web.
+
+The page adds a list of its sections and two switches. One follows a light or a dark screen. The other dims everything but headings, bold text and first sentences, which is the skim view of `skimmable-writing` on the page itself.
+
+`scripts/page_check.py` confirms that the page is the render of the text as it is now and that its words are the text's words. With `playwright` it also confirms that nothing is wider than a phone's screen.
+
 ## explain-well
 
-**One command that runs the five skills in order on a text someone will rely on.** It holds the order, when a step is skipped and when to stop, and it repeats no rule of the other skills.
+**One command that runs the seven skills in order on a text someone will rely on.** It holds the order, when a step is skipped and when to stop, and it repeats no rule of the other skills.
 
 The two readers run after every other edit, each at most twice. The report then shows the line each step printed, what the readers found, and what is still open. Claude never starts it on its own: you call it as `/explain:explain-well`.
 
@@ -183,19 +211,15 @@ The limits: one model as reader and judge, 12 write-ups of four synthetic sessio
 | Claude runs the form check when it can | In 12 of 12 runs; listed problems went from 7.9 to 0. | the same script, an older skill text |
 | A count of statements with no source is stable | No: two readings of one text differed as much as planted sentences moved it. This is why "no source" does not block. | an earlier prompt |
 | `keep-sources` | Not measured here. | |
+| `draw-figures`, `render-page` | Not measured. Their scripts have tests, and each was tried once by its author on one text. | |
 
 A model reader cannot judge whether a text is pleasant to read. Treat the form rules as one person's taste, written down.
-
-## One more step, kept elsewhere
-
-**`illustrate` turns the checked text into one HTML page with figures.** It runs last and is not in this repository.
 
 ## Credits
 
 **`deslop-prose` adapts published text, and the table lists published work that was read for comparison on 2026-11-21 and 2026-11-22.**
 
 - The tells in `deslop-prose` follow Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) and the [humanizer](https://github.com/blader/humanizer) skill (MIT), reworded and cut down to sentences. Its formatting rules are left out on purpose: here the structure belongs to the writer.
-- `illustrate`, the step kept elsewhere, began as an adaptation of [visual-explainer](https://github.com/nicobailon/visual-explainer) by Nico Bailon (MIT). visual-explainer in turn credits [Anthropic's frontend-design skill](https://github.com/anthropics/skills) and [interface-design](https://github.com/Dammyjay93/interface-design) for ideas.
 
 | Work | Bears on | What it is |
 |---|---|---|
@@ -211,6 +235,12 @@ A model reader cannot judge whether a text is pleasant to read. Treat the form r
 | [Hermes Grounded Citations](https://hermes-agent.nousresearch.com/docs/user-guide/skills/bundled/research/research-grounded-citations) | `keep-sources` | a ledger script that rejects a quote not in the page |
 | [citefact](https://github.com/hearthresearch/citefact) | `check-sources` | a checker of verbatim quotes against the cited source |
 | [anti-slop-writing](https://github.com/adewale/anti-slop-writing) | `deslop-prose` | a style skill with pre-registered evals |
+
+## Where the figures and the page come from
+
+**`draw-figures` and `render-page` come out of `illustrate`, a skill of the same author that is not public.** It began as an adaptation of [visual-explainer](https://github.com/nicobailon/visual-explainer) by Nico Bailon (MIT), which in turn credits [Anthropic's frontend-design skill](https://github.com/anthropics/skills) and [interface-design](https://github.com/Dammyjay93/interface-design) for ideas.
+
+The drawing rules and the checks here were written after that start, and the page layout was written new. Of the 2,434 lines of the two skills, 3 stand word for word in visual-explainer 0.7.1, and all three are one-line CSS idioms. The count takes lines of 30 characters or more.
 
 ## Tests
 

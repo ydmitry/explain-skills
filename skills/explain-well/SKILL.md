@@ -1,6 +1,6 @@
 ---
 name: explain-well
-description: Runs the whole explain set, in order, on one text someone will rely on - keep-sources, skimmable-writing, deslop-prose, check-sources, cold-read, and illustrate when a page is asked for. Called by the user only.
+description: Runs the whole explain set, in order, on one text someone will rely on - keep-sources, skimmable-writing, deslop-prose, check-sources, cold-read, then draw-figures for the figures the text marks and render-page when a page is asked for. Called by the user only.
 argument-hint: "[what to write, or the file to finish]"
 disable-model-invocation: true
 ---
@@ -16,12 +16,13 @@ One command for a text someone will rely on: a report, findings, a write-up, a R
 | Step | When | Skill | Done when |
 |---|---|---|---|
 | 1 | While the work runs | `keep-sources` | `sources.py check` prints `errors=0` |
-| 2 | Writing | `skimmable-writing` | `skim_check.py` prints `problems=0` |
+| 2 | Writing | `skimmable-writing`, and `draw-figures` for which claims get a `Figure:` line | `skim_check.py` prints `problems=0` |
 | 3 | After writing | `deslop-prose` | `prose_check.py check` prints `errors=0`, and the check of step 2 still prints `problems=0` |
 | 4 | Before showing | `check-sources` and `cold-read`: two fresh readers of the same final text | the last line of `check_sources.py quotes` shows `counted=0`, and none of the four conditions of `cold-read` holds |
-| 5 | Last, only when a page is asked for | `illustrate`, if it is installed | its `gates.py` prints `errors=0` |
+| 5 | After the readers, when the text has a `Figure:` line | `draw-figures` | `figures.py check` prints `problems=0`, and each picture was looked at |
+| 6 | Last, only when a page is asked for | `render-page` | `page_check.py` prints `problems=0` |
 
-**Every edit comes before the readers.** They read the text as it will be shown, so the two can be dispatched at the same time.
+**Every edit comes before the readers.** They read the text as it will be shown, `Figure:` lines included, so the two can be dispatched at the same time. Steps 5 and 6 add no sentence: a figure's labels come from the text, and the page is the text.
 
 ## Where to start
 

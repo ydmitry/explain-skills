@@ -1,0 +1,401 @@
+import importlib.util
+import re
+import tempfile
+import unittest
+from pathlib import Path
+
+from util import SKILLS, run
+
+F = "draw-figures/scripts/figures.py"
+CLAIM = "Before the fix 3 of 8 checks passed, after it all 8 pass."
+TEXT = f"# Title\n\nThe fix changed the checks.\n\nFigure: {CLAIM}\n\nMore text.\n"
+GOOD = f'''<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 320 120" role="img"
+     aria-label="{CLAIM}">
+  <defs><style>
+    #fig-1 .lbl {{ font-size: 12px; }}
+  </style></defs>
+  <rect x="24" y="40" width="112" height="20" rx="4" style="fill:var(--bg); stroke:var(--border)"/>
+  <rect x="24" y="40" width="42" height="20" rx="4" style="fill:var(--error)"/>
+  <text class="lbl" x="24" y="84">3 of 8 pass</text>
+  <rect x="184" y="40" width="112" height="20" rx="4" style="fill:var(--ok)"/>
+  <text class="lbl" x="184" y="84">all 8 pass</text>
+</svg>
+'''
+BRIEF = f"""# Figure brief: text.md
+
+text: text.md
+canvas: 320 wide
+palette: --ok pass, --error fail
+
+## fig-1
+claim: {CLAIM}
+shape: the Gap
+data: before 3 of 8, after 8 of 8 (text.md:5)
+constraints: one track width for both states
+"""
+HAS_BROWSER = importlib.util.find_spec("playwright") is not None
+
+
+class Folder(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.text = self.root / "text.md"
+        self.figs = self.root / "figures" / "text"
+        self.figs.mkdir(parents=True)
+        self.text.write_text(TEXT)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def draw(self, svg=GOOD, brief=BRIEF, name="fig-1.svg"):
+        (self.figs / name).write_text(svg)
+        if brief is not None:
+            (self.figs / "brief.md").write_text(brief)
+
+    def check(self, *more):
+        return run(F, "check", self.text, "--no-measure", *more)
+
+    def last(self, out):
+        return out.strip().split("\n")[-1]
+
+
+class Marks(Folder):
+    def test_marks_lists_each_mark_with_its_file(self):
+        code, out = run(F, "marks", self.text)
+        self.assertEqual(code, 0, out)
+        self.assertIn("fig-1", out)
+        self.assertIn("line 5", out)
+        self.assertIn("figures/text/fig-1.svg", out)
+        self.assertIn(CLAIM, out)
+        self.assertEqual(self.last(out), "marks=1 drawn=0")
+
+    def test_a_figure_line_inside_a_code_fence_is_not_a_mark(self):
+        self.text.write_text("# Title\n\n```\nFigure: This is an example of a mark.\n```\n")
+        code, out = run(F, "marks", self.text)
+        self.assertEqual(self.last(out), "marks=0 drawn=0")
+
+    def test_marks_are_numbered_in_the_order_they_stand(self):
+        self.text.write_text(TEXT + "\nFigure: A second claim stands lower in the text.\n")
+        code, out = run(F, "marks", self.text)
+        self.assertRegex(out, r"fig-2\s+line 9")
+        self.assertEqual(self.last(out), "marks=2 drawn=0")
+
+
+class Brief(Folder):
+    def test_brief_writes_a_block_for_each_mark_with_its_sentence(self):
+        code, out = run(F, "brief", self.text)
+        self.assertEqual(code, 0, out)
+        brief = (self.figs / "brief.md").read_text()
+        self.assertIn("## fig-1", brief)
+        self.assertIn(f"claim: {CLAIM}", brief)
+        for field in ("shape:", "data:", "constraints:", "canvas:", "palette:"):
+            self.assertIn(field, brief)
+
+    def test_brief_keeps_what_was_filled_and_follows_a_changed_mark(self):
+        self.draw()
+        self.text.write_text(TEXT.replace("all 8 pass", "all 8 of them pass"))
+        code, out = run(F, "brief", self.text)
+        brief = (self.figs / "brief.md").read_text()
+        self.assertIn("shape: the Gap", brief)
+        self.assertIn("claim: Before the fix 3 of 8 checks passed, after it all 8 of them pass.", brief)
+        self.assertNotIn(f"claim: {CLAIM}", brief)
+
+    def test_brief_strips_markdown_from_the_claim(self):
+        self.text.write_text("# T\n\nFigure: The **guard** in `retry.py` stops [a third try](https://example.com).\n")
+        run(F, "brief", self.text)
+        self.assertIn("claim: The guard in retry.py stops a third try.", (self.figs / "brief.md").read_text())
+
+
+class Check(Folder):
+    def test_a_complete_figure_passes(self):
+        self.draw()
+        code, out = self.check()
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.last(out), "problems=0")
+        self.assertIn("measured=no", out)
+
+    def test_a_mark_with_no_file_is_a_problem(self):
+        code, out = self.check()
+        self.assertEqual(code, 1)
+        self.assertIn("PROBLEM fig-1: not-drawn", out)
+
+    def test_a_label_that_is_not_the_marks_sentence_is_a_problem(self):
+        self.draw(GOOD.replace("after it all 8 pass.", "then all pass."))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: label-differs", out)
+        self.assertEqual(code, 1)
+
+    def test_a_typed_colour_is_a_problem(self):
+        for bad in ('style="fill:#3f7d5c"', 'fill="green"', 'style="stroke: rgb(1,2,3)"'):
+            self.draw(GOOD.replace('style="fill:var(--ok)"', bad))
+            code, out = self.check()
+            self.assertIn("PROBLEM fig-1: raw-color", out, bad)
+
+    def test_keywords_that_are_no_colour_pass(self):
+        self.draw(GOOD.replace('style="fill:var(--ok)"', 'fill="none" style="stroke:currentColor"'))
+        code, out = self.check()
+        self.assertNotIn("raw-color", out)
+
+    def test_an_id_without_the_figures_id_is_a_problem(self):
+        self.draw(GOOD.replace('<rect x="184"', '<rect id="after" x="184"'))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: unscoped-id", out)
+        self.assertIn("after", out)
+
+    def test_a_selector_without_the_figures_id_is_a_problem(self):
+        self.draw(GOOD.replace("#fig-1 .lbl", ".lbl"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: unscoped-style", out)
+
+    def test_a_media_query_in_the_figure_is_a_problem(self):
+        self.draw(GOOD.replace("#fig-1 .lbl { font-size: 12px; }",
+                               "@media (prefers-color-scheme: dark) { #fig-1 .lbl { font-size: 12px; } }"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: at-rule", out)
+
+    def test_a_word_the_text_does_not_have_is_a_problem(self):
+        self.draw(GOOD.replace(">all 8 pass<", ">all 8 pass in staging<"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: new-words", out)
+        self.assertIn("staging", out)
+        self.assertNotIn("pass,", out)
+
+    def test_a_number_the_text_does_not_have_is_a_problem(self):
+        self.draw(GOOD.replace(">3 of 8 pass<", ">3 of 8 pass in 42 ms<"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: new-numbers", out)
+        self.assertIn("42", out)
+
+    def test_a_word_in_the_figures_block_of_the_brief_passes(self):
+        self.draw(GOOD.replace(">all 8 pass<", ">all 8 pass in staging<"),
+                  BRIEF.replace("after 8 of 8", "after 8 of 8 in staging"))
+        code, out = self.check()
+        self.assertEqual(code, 0, out)
+
+    def test_a_number_in_a_source_pointer_allows_nothing(self):
+        self.draw(GOOD.replace(">3 of 8 pass<", ">3 of 8 pass, 5<"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: new-numbers", out)
+
+    def test_a_number_of_the_brief_that_is_not_drawn_is_a_problem(self):
+        self.draw(brief=BRIEF.replace("after 8 of 8", "after 8 of 8, 17 skipped"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: value-not-drawn", out)
+        self.assertIn("17", out)
+
+    def test_no_brief_is_a_problem(self):
+        self.draw(brief=None)
+        code, out = self.check()
+        self.assertIn("PROBLEM brief-missing", out)
+
+    def test_a_brief_with_an_empty_shape_is_a_problem(self):
+        self.draw(brief=BRIEF.replace("shape: the Gap", "shape:"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: brief-incomplete", out)
+
+    def test_a_brief_whose_claim_is_not_the_mark_is_a_problem(self):
+        self.draw(brief=BRIEF.replace(CLAIM, "Something else is claimed here."))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: brief-claim-differs", out)
+
+    def test_a_file_that_is_not_xml_is_a_problem(self):
+        self.draw(GOOD.replace(">3 of 8 pass<", ">3 of 8 pass & more<"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: not-xml", out)
+
+    def test_a_script_a_gradient_and_a_link_out_are_problems(self):
+        self.draw(GOOD.replace("</svg>", '<script>1</script><linearGradient id="fig-1-g"/>'
+                                         '<use href="https://example.com/x.svg#a"/></svg>'))
+        code, out = self.check()
+        self.assertIn("banned-element", out)
+        self.assertIn("script", out)
+        self.assertIn("linearGradient", out)
+        self.assertIn("PROBLEM fig-1: external-ref", out)
+
+    def test_a_reference_to_an_id_that_is_not_there_is_a_problem(self):
+        self.draw(GOOD.replace('rx="4" style="fill:var(--ok)"', 'rx="4" style="fill:var(--ok)" marker-end="url(#fig-1-arrow)"'))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: unresolved-ref", out)
+
+    def test_a_typed_font_is_a_problem(self):
+        self.draw(GOOD.replace("font-size: 12px;", "font-size: 12px; font-family: Helvetica;"))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: typed-font", out)
+
+    def test_small_text_and_a_wide_canvas_are_problems(self):
+        self.draw(GOOD.replace("font-size: 12px", "font-size: 8px").replace('viewBox="0 0 320 120"', 'viewBox="0 0 900 120"'))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: text-too-small", out)
+        self.assertIn("PROBLEM fig-1: too-wide", out)
+
+    def test_a_typed_size_is_a_problem(self):
+        self.draw(GOOD.replace('viewBox="0 0 320 120"', 'viewBox="0 0 320 120" width="640" height="240"'))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: typed-size", out)
+
+    def test_a_missing_namespace_and_role_are_problems(self):
+        self.draw(GOOD.replace(' xmlns="http://www.w3.org/2000/svg"', "").replace(' role="img"', ""))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: no-xmlns", out)
+        self.assertIn("PROBLEM fig-1: a11y-missing", out)
+
+    def test_a_figure_file_with_no_mark_is_a_problem(self):
+        self.draw()
+        self.draw(GOOD.replace("fig-1", "fig-2"), name="fig-2.svg")
+        code, out = self.check()
+        self.assertIn("PROBLEM extra-file", out)
+        self.assertIn("fig-2.svg", out)
+
+    def test_a_mark_that_shares_its_paragraph_is_a_problem(self):
+        self.draw()
+        self.text.write_text(TEXT.replace(f"\n\nFigure: {CLAIM}\n\n", f"\nFigure: {CLAIM}\n\n"))
+        code, out = self.check()
+        self.assertIn("PROBLEM mark-not-alone", out)
+
+    def test_a_mark_of_two_words_states_no_claim(self):
+        self.text.write_text("# Title\n\nFigure: coverage chart\n")
+        code, out = self.check()
+        self.assertIn("PROBLEM mark-too-short", out)
+
+    def test_a_text_with_no_marks_passes(self):
+        self.text.write_text("# Title\n\nNo figure here.\n")
+        code, out = self.check()
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.last(out), "problems=0")
+
+
+class Place(Folder):
+    def test_place_writes_the_tokens_the_size_and_an_image_line(self):
+        self.draw()
+        code, out = run(F, "place", self.text)
+        self.assertEqual(code, 0, out)
+        svg = (self.figs / "fig-1.svg").read_text()
+        self.assertIn("<style data-tokens", svg)
+        self.assertIn("--ok:", svg)
+        self.assertIn("prefers-color-scheme: dark", svg)
+        self.assertRegex(svg, r'<svg[^>]*\swidth="320"')
+        self.assertRegex(svg, r'<svg[^>]*\sheight="120"')
+        text = self.text.read_text()
+        self.assertIn(f"![{CLAIM}](figures/text/fig-1.svg)\n\nFigure: {CLAIM}\n", text)
+
+    def test_place_twice_changes_nothing_more(self):
+        self.draw()
+        run(F, "place", self.text)
+        svg, text = (self.figs / "fig-1.svg").read_text(), self.text.read_text()
+        code, out = run(F, "place", self.text)
+        self.assertEqual(code, 0, out)
+        self.assertEqual((self.figs / "fig-1.svg").read_text(), svg)
+        self.assertEqual(self.text.read_text(), text)
+        self.assertEqual(svg.count("<style data-tokens"), 1)
+        self.assertEqual(text.count("![") , 1)
+
+    def test_a_placed_figure_still_passes_the_check_and_is_one_mark(self):
+        self.draw()
+        run(F, "place", self.text)
+        code, out = self.check()
+        self.assertEqual(code, 0, out)
+        code, out = run(F, "marks", self.text)
+        self.assertEqual(self.last(out), "marks=1 drawn=1")
+
+    def test_place_refuses_while_the_check_lists_problems(self):
+        self.draw(GOOD.replace("var(--ok)", "#00ff00"))
+        code, out = run(F, "place", self.text)
+        self.assertEqual(code, 1)
+        self.assertIn("raw-color", out)
+        self.assertNotIn("data-tokens", (self.figs / "fig-1.svg").read_text())
+        self.assertNotIn("![", self.text.read_text())
+
+    def test_the_image_line_follows_a_changed_mark(self):
+        self.draw()
+        run(F, "place", self.text)
+        new = CLAIM.replace("all 8 pass", "all 8 of them pass")
+        self.text.write_text(self.text.read_text().replace(f"Figure: {CLAIM}", f"Figure: {new}"))
+        (self.figs / "fig-1.svg").write_text((self.figs / "fig-1.svg").read_text().replace(CLAIM, new))
+        (self.figs / "brief.md").write_text(BRIEF.replace(CLAIM, new))
+        code, out = run(F, "place", self.text)
+        self.assertEqual(code, 0, out)
+        text = self.text.read_text()
+        self.assertIn(f"![{new}](figures/text/fig-1.svg)", text)
+        self.assertEqual(text.count("!["), 1)
+
+
+class Tokens(unittest.TestCase):
+    """The ratios the colour reference states hold for the values in tokens.css."""
+
+    def setUp(self):
+        css = (SKILLS / "draw-figures/assets/tokens.css").read_text()
+        light, dark = css.split("@media")
+        self.light = dict(re.findall(r"--([\w-]+):\s*(#[0-9a-f]{6});", light))
+        self.dark = dict(self.light, **dict(re.findall(r"--([\w-]+):\s*(#[0-9a-f]{6});", dark)))
+
+    @staticmethod
+    def ratio(a, b):
+        def lum(c):
+            v = [x / 255 for x in c]
+            v = [x / 12.92 if x <= 0.03928 else ((x + 0.055) / 1.055) ** 2.4 for x in v]
+            return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]
+        hi, lo = sorted((lum(a), lum(b)), reverse=True)
+        return (hi + 0.05) / (lo + 0.05)
+
+    @staticmethod
+    def rgb(h):
+        return tuple(int(h[i:i + 2], 16) for i in (1, 3, 5))
+
+    def mix(self, a, share, b):
+        return tuple(round(x * share + y * (1 - share)) for x, y in zip(a, b))
+
+    def test_every_ink_reads_on_the_ground_and_on_its_own_zone(self):
+        for name, t in (("light", self.light), ("dark", self.dark)):
+            ground, text = self.rgb(t["surface"]), self.rgb(t["text"])
+            for hue in ("ok", "warn", "error", "muted", "info"):
+                ink = self.mix(self.rgb(t[hue]), 0.38, text)
+                zone = self.mix(self.rgb(t[hue]), 0.12, ground)
+                self.assertGreaterEqual(self.ratio(ink, ground), 4.5, f"{name} {hue}-ink on the ground")
+                self.assertGreaterEqual(self.ratio(ink, zone), 4.5, f"{name} {hue}-ink on its zone")
+
+    def test_every_solid_hue_is_a_visible_mark_on_the_ground(self):
+        for name, t in (("light", self.light), ("dark", self.dark)):
+            for hue in ("ok", "warn", "error", "muted", "info"):
+                self.assertGreaterEqual(self.ratio(self.rgb(t[hue]), self.rgb(t["surface"])), 3, f"{name} {hue}")
+
+    def test_label_text_reads_on_the_ground(self):
+        for name, t in (("light", self.light), ("dark", self.dark)):
+            for ink in ("text", "text-dim", "muted"):
+                self.assertGreaterEqual(self.ratio(self.rgb(t[ink]), self.rgb(t["surface"])), 4.5, f"{name} {ink}")
+
+
+@unittest.skipUnless(HAS_BROWSER, "the playwright package is not installed")
+class Measured(Folder):
+    def test_two_labels_drawn_on_top_of_each_other_are_a_problem(self):
+        self.draw(GOOD.replace('<text class="lbl" x="184" y="84">', '<text class="lbl" x="30" y="86">'))
+        code, out = run(F, "check", self.text)
+        self.assertIn("measured=yes", out)
+        self.assertIn("PROBLEM fig-1: text-collision", out)
+        self.assertEqual(code, 1)
+
+    def test_a_label_that_leaves_the_canvas_is_a_problem(self):
+        self.draw(GOOD.replace('x="184" y="84">all 8 pass<', 'x="290" y="84">all 8 pass<'))
+        code, out = run(F, "check", self.text)
+        self.assertIn("PROBLEM fig-1: outside-viewbox", out)
+
+    def test_a_complete_figure_passes_when_measured(self):
+        self.draw()
+        code, out = run(F, "check", self.text)
+        self.assertIn("measured=yes", out)
+        self.assertNotIn("PROBLEM", out)
+        self.assertEqual(code, 0, out)
+
+    def test_preview_writes_a_picture_for_a_light_and_a_dark_screen(self):
+        self.draw()
+        shots = self.root / "shots"
+        code, out = run(F, "preview", self.text, "--out", shots)
+        self.assertEqual(code, 0, out)
+        light, dark = shots / "fig-1.png", shots / "fig-1-dark.png"
+        self.assertTrue(light.exists() and dark.exists(), out)
+        self.assertNotEqual(light.read_bytes(), dark.read_bytes())
+        self.assertTrue((shots / "preview.html").exists())
+
+
+if __name__ == "__main__":
+    unittest.main()

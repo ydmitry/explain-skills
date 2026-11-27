@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<style>
+{{tokens}}
+  :root { --measure: 720px; --rail: 232px; color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 64px; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body);
+         font-size: 17px; line-height: 1.62; overflow-wrap: break-word; }
+
+  /* the bar: contents on the left, the two switches on the right; a rail beside the text on a wide screen */
+  .bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px;
+         padding: 8px 14px; background: color-mix(in srgb, var(--bg) 92%, transparent);
+         backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+  .toc { flex: 1 1 auto; min-width: 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc a { flex: 0 0 auto; padding: 5px 10px; border-radius: 999px; font-size: 14px; line-height: 1.3;
+           color: var(--text-dim); text-decoration: none; white-space: nowrap; }
+  .toc a:hover { color: var(--text); }
+  .toc a[aria-current="true"] { color: var(--accent); background: var(--info-zone); }
+  .tools { flex: 0 0 auto; display: flex; gap: 6px; }
+  .tools button { font: inherit; font-size: 13px; line-height: 1; height: 32px; padding: 0 11px; cursor: pointer;
+                  color: var(--text-dim); background: var(--bg); border: 1px solid var(--border); border-radius: 999px; }
+  .tools button:hover { color: var(--text); border-color: var(--text-dim); }
+  .tools button[aria-pressed="true"] { color: var(--accent-fg); background: var(--accent); border-color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  main { max-width: calc(var(--measure) + 36px); margin: 0 auto; padding: 28px 18px 96px; }
+  main > * { min-width: 0; }
+  h1, h2, h3, h4, h5, h6 { line-height: 1.2; letter-spacing: -0.012em; text-wrap: balance; }
+  h1 { font-size: clamp(28px, 6vw, 40px); font-weight: 700; margin: 0 0 18px; letter-spacing: -0.022em; }
+  h1::before { content: ""; display: block; width: 44px; height: 4px; margin: 0 0 18px; background: var(--accent); border-radius: 2px; }
+  h2 { font-size: 24px; font-weight: 650; margin: 52px 0 12px; padding-top: 22px; border-top: 1px solid var(--border); }
+  h3 { font-size: 19px; font-weight: 650; margin: 30px 0 8px; }
+  h4, h5, h6 { font-size: 17px; font-weight: 650; margin: 24px 0 6px; }
+  p, ul, ol, blockquote, pre, figure, .scroll { margin: 0 0 16px; }
+  h1 + p { font-size: 19px; line-height: 1.55; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 0 0 6px; }
+  li > ul, li > ol { margin: 6px 0 0; }
+  li::marker { color: var(--text-dim); }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  b, strong { font-weight: 650; }
+  code { font-family: var(--font-mono); font-size: 0.88em; background: var(--surface); border: 1px solid var(--border);
+         border-radius: 5px; padding: 1px 5px; }
+  pre { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+        overflow-x: auto; font-size: 14px; line-height: 1.55; }
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  blockquote { padding: 2px 0 2px 16px; border-left: 3px solid var(--info-line); color: var(--text-dim); }
+  blockquote > :last-child { margin-bottom: 0; }
+  hr { border: 0; border-top: 1px solid var(--border); margin: 36px 0; }
+  img { max-width: 100%; height: auto; border-radius: 8px; }
+
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.45; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--border); }
+  th { font-size: 13px; font-weight: 650; color: var(--text-dim); border-bottom-color: var(--text-dim); white-space: nowrap; }
+  th:last-child, td:last-child { padding-right: 0; }
+  td code { white-space: nowrap; }
+
+  figure { margin: 26px 0 28px; }
+  .fig { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow-x: auto; }
+  .fig svg { display: block; width: 100%; height: auto; margin: 0 auto; font-family: var(--font-body); }
+  .fig svg text { fill: var(--text); }
+  figcaption { margin: 10px 2px 0; font-size: 15px; line-height: 1.45; color: var(--text-dim); }
+
+  /* the skim switch: what a skimming eye sees stays dark, the rest steps back */
+  body.skim main .rest, body.skim main td, body.skim main pre, body.skim main blockquote { color: color-mix(in srgb, var(--text) 26%, var(--bg)); }
+  body.skim main .rest b, body.skim main .rest strong, body.skim main td b, body.skim main td strong { color: var(--text); }
+  body.skim main .rest a, body.skim main td a { color: inherit; }
+
+  @media (min-width: 1180px) {
+    body { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); column-gap: 28px; }
+    .bar { position: sticky; top: 0; align-self: start; height: 100vh; flex-direction: column; align-items: stretch;
+           padding: 30px 12px 20px 22px; border-bottom: 0; border-right: 1px solid var(--border); background: none; backdrop-filter: none; }
+    .toc { flex-direction: column; overflow: hidden auto; gap: 2px; }
+    .toc a { white-space: normal; border-radius: 8px; padding: 6px 10px; }
+    .tools { flex-wrap: wrap; }
+    main { margin: 0; padding-top: 44px; max-width: calc(var(--measure) + 36px); }
+    html { scroll-padding-top: 24px; }
+  }
+  @media (max-width: 480px) {
+    body { font-size: 16px; }
+    h2 { font-size: 22px; margin-top: 40px; }
+    h1 + p { font-size: 17.5px; }
+  }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  @media print { .bar { display: none; } body { display: block; } main { max-width: none; } h2 { break-after: avoid; } figure { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="bar" data-chrome>
+  <nav class="toc" aria-label="Contents">
+{{toc}}
+  </nav>
+  <div class="tools">
+    <button type="button" id="skim" aria-pressed="false" title="Show the page as a skimming eye sees it">Skim</button>
+    <button type="button" id="theme" title="Light, dark, or as the system">Auto</button>
+  </div>
+</div>
+<main>
+{{body}}
+</main>
+<script>
+(function () {
+  var root = document.documentElement;
+  var skim = document.getElementById('skim');
+  skim.addEventListener('click', function () {
+    skim.setAttribute('aria-pressed', document.body.classList.toggle('skim') ? 'true' : 'false');
+  });
+  var theme = document.getElementById('theme'), modes = ['auto', 'light', 'dark'], at = 0;
+  theme.addEventListener('click', function () {
+    at = (at + 1) % modes.length;
+    if (modes[at] === 'auto') { root.removeAttribute('data-theme'); } else { root.setAttribute('data-theme', modes[at]); }
+    theme.textContent = modes[at].charAt(0).toUpperCase() + modes[at].slice(1);
+  });
+  var links = [].slice.call(document.querySelectorAll('.toc a'));
+  var heads = links.map(function (a) { return document.getElementById(decodeURIComponent(a.hash.slice(1))); });
+  if (!links.length) { return; }
+  function mark() {
+    var now = 0;
+    heads.forEach(function (h, i) { if (h && h.getBoundingClientRect().top < 130) { now = i; } });
+    links.forEach(function (a, i) {
+      if ((i === now) === (a.getAttribute('aria-current') === 'true')) { return; }
+      if (i !== now) { a.removeAttribute('aria-current'); return; }
+      a.setAttribute('aria-current', 'true');
+      var bar = a.parentNode;
+      if (bar.scrollWidth > bar.clientWidth) { bar.scrollLeft = a.offsetLeft - bar.offsetLeft - 12; }
+    });
+  }
+  var waiting = false;
+  window.addEventListener('scroll', function () {
+    if (waiting) { return; }
+    waiting = true;
+    requestAnimationFrame(function () { waiting = false; mark(); });
+  }, { passive: true });
+  mark();
+})();
+</script>
+</body>
+</html>

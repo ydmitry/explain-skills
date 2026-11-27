@@ -1,0 +1,50 @@
+/* The colours and fonts every figure reads. `figures.py place` writes this block into each figure file,
+   and a page that shows the figures inline defines the same names itself. A figure never types a colour:
+   it reads these names, so it follows a light and a dark screen without any work of its own. */
+:root {
+  --bg: #ffffff;
+  --surface: #f7f8fa;
+  --border: #e2e5ec;
+  --text: #161920;
+  --text-dim: #5f6675;
+  --muted: #5b6471;
+  --accent: #2f5fd0;
+  --accent-fg: #ffffff;
+  --ok: #3f7d5c;
+  --warn: #a9791b;
+  --error: #b4483c;
+  --info: #2f5fd0;
+  --font-body: "Space Grotesk", "Avenir Next", "Segoe UI", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --ok-zone: color-mix(in srgb, var(--ok) 12%, var(--surface));
+  --ok-line: color-mix(in srgb, var(--ok) 42%, var(--surface));
+  --ok-ink: color-mix(in srgb, var(--ok) 38%, var(--text));
+  --error-zone: color-mix(in srgb, var(--error) 12%, var(--surface));
+  --error-line: color-mix(in srgb, var(--error) 42%, var(--surface));
+  --error-ink: color-mix(in srgb, var(--error) 38%, var(--text));
+  --warn-zone: color-mix(in srgb, var(--warn) 12%, var(--surface));
+  --warn-line: color-mix(in srgb, var(--warn) 42%, var(--surface));
+  --warn-ink: color-mix(in srgb, var(--warn) 38%, var(--text));
+  --muted-zone: color-mix(in srgb, var(--muted) 12%, var(--surface));
+  --muted-line: color-mix(in srgb, var(--muted) 42%, var(--surface));
+  --muted-ink: color-mix(in srgb, var(--muted) 38%, var(--text));
+  --info-zone: color-mix(in srgb, var(--info) 12%, var(--surface));
+  --info-line: color-mix(in srgb, var(--info) 42%, var(--surface));
+  --info-ink: color-mix(in srgb, var(--info) 38%, var(--text));
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1116;
+    --surface: #161920;
+    --border: #2a2f3a;
+    --text: #f7f8fa;
+    --text-dim: #9aa2b1;
+    --muted: #8b949e;
+    --accent: #5b8def;
+    --accent-fg: #0e1116;
+    --ok: #5b9d78;
+    --warn: #c99a3a;
+    --error: #d0685b;
+    --info: #5b8def;
+  }
+}
