@@ -132,7 +132,15 @@ A model judge counts as proven only after it moved the right way on damage that 
 | Do the headings open with the same word? | On six of seven pages written with the set, 43% to 71% of them do. In the 80 write-ups the share is 15% with no skill and 18% with it. |
 | Do the sections look less alike with the skill? | Not shown. |
 
-Two things were changed on 2026-11-27 after these counts, and no writer has been tested with either. `skimmable-writing` now asks for a pointer to the source of a fact, and `skim_check.py` notes headings that open with the same word.
+Two things were changed on 2026-11-27 after these counts. `skimmable-writing` now asks for a pointer to the source of a fact, and `skim_check.py` notes headings that open with the same word. No writer has been tested with the note.
+
+## The pointer rule, tried on a writer
+
+**With the rule, 15 of 20 write-ups point to a line of a file that their session shows, against 5 of 20 without it.** Claude Haiku wrote both sets on 2026-11-27 from the same four sessions. The two skill texts are the skill before and after commit `cf5d538`, which added the rule and a paragraph on the heading note.
+
+A script looked each pointer up in the transcript the write-up was written from. Of the 83 pointers made with the rule it could not place 2, and both are right on reading. Where a transcript showed no line of any file, the writers made none up.
+
+The writer had a transcript and no files, so this does not show what a writer with tools does. It also does not show that the line a pointer names says what the sentence says.
 
 ## What was not measured, or only on earlier forms
 
