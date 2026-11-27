@@ -146,7 +146,9 @@ The writer had a transcript and no files. It also does not show that the line a 
 
 ## The pointer rule, on a writer that opens files
 
-**With the rule, 18 of 20 write-ups point to a line that exists, against 0 of 20 without it, and none of 142 pointers leads nowhere.** On 2026-11-27 Claude Haiku got a folder with one script and its tests, tools to read them, and a request for a hand-over that named no pointer. Four folders, five write-ups each, with the two skill texts of the check above.
+**With the rule, 18 of 20 write-ups point to a line that exists, against 0 of 20 without it, and none of 142 pointers leads nowhere.**
+
+On 2026-11-27 Claude Haiku got a folder with one script and its tests, tools to read them, and a request for a hand-over that named no pointer. Four folders, five write-ups each, with the two skill texts of the check above.
 
 A script looked each pointer up in the folder: the file is there and has that line. Without the rule no write-up named a line, and both sets named bare file names about as often, 181 and 183 times. The write-ups are as long in both sets.
 
