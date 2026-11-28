@@ -90,7 +90,7 @@ Every figure is one file, `fig-N.svg`, in the text's figures folder: one `<svg>`
   </defs>
 
   <!-- dashed divider: decoration layer, drawn FIRST so it sits under the labels -->
-  <line x1="360" y1="14" x2="360" y2="186" style="stroke:var(--border)" stroke-dasharray="4 4"/>
+  <line x1="360" y1="14" x2="360" y2="186" style="stroke:var(--muted-line)" stroke-dasharray="4 4"/>
   <text class="head ok-i"  x="20"  y="28">PASSES</text>
   <text class="head err-i" x="380" y="28">REJECTED</text>
 
@@ -214,7 +214,7 @@ A `shape: the Gap` brief renders as two states on a shared baseline, split by a 
       <path d="M0 0 L10 5 L0 10 z" style="fill:var(--muted)"/>
     </marker>
   </defs>
-  <line x1="360" y1="36" x2="360" y2="184" style="stroke:var(--border)" stroke-dasharray="4 4"/><!-- the Gap -->
+  <line x1="360" y1="36" x2="360" y2="184" style="stroke:var(--muted-line)" stroke-dasharray="4 4"/><!-- the Gap -->
   <rect x="130" y="98" width="70" height="72"  rx="4" style="fill:var(--muted)"/><!-- before: 60% -->
   <rect x="520" y="56" width="70" height="114" rx="4" style="fill:var(--ok)"/><!-- after: 95% -->
   <line x1="210" y1="92" x2="512" y2="60" style="stroke:var(--muted)" marker-end="url(#fig-2-rise)"/><!-- the movement -->
@@ -271,7 +271,7 @@ Here is the positive case: a before/after split where the dashed Gap and the fil
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 320 120" role="img"
      aria-label="Before the fix 3 of 8 checks passed; after the fix all 8 pass.">
   <!-- the Gap: this dashed divider is the claim, not decoration -->
-  <line x1="160" y1="12" x2="160" y2="108" style="stroke:var(--border)" stroke-dasharray="4 4"/>
+  <line x1="160" y1="12" x2="160" y2="108" style="stroke:var(--muted-line)" stroke-dasharray="4 4"/>
   <text x="80"  y="24" text-anchor="middle" font-size="12" style="fill:var(--muted)">Before</text>
   <text x="240" y="24" text-anchor="middle" font-size="12" style="fill:var(--muted)">After</text>
   <!-- before: track + 3/8 partial fill -> 3/8 * 112 = 42 -->

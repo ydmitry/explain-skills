@@ -295,7 +295,7 @@ const mid  = colX(0) + COL + GAP / 2;     // 160 — the dashed divider, centere
           x="60" dy="20" font-size="12" font-weight="400">before</tspan></text>
   </g>
   <!-- the gap: dashed divider + delta label -->
-  <line x1="160" y1="20" x2="160" y2="100" style="stroke:var(--border)" stroke-dasharray="4 4"/>
+  <line x1="160" y1="20" x2="160" y2="100" style="stroke:var(--muted-line)" stroke-dasharray="4 4"/>
   <text x="160" y="16" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--ok-ink)">+32 pts</text>
   <!-- after: ok-tinted block -->
   <g transform="translate(184,28)">

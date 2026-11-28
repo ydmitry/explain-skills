@@ -244,6 +244,8 @@ at the same tier).
 > Install playwright only where your instructions allow installing packages; never make it a
 > *required* dependency, the same rule as Gate 2.
 
+**Look for a line you cannot see.** No finding reports a divider or a scale rail drawn in `--border` that vanishes on a dark screen: when the claim leans on the line, draw it in `--muted-line` (S6).
+
 ### Gate 2 — Opportunistic bounded vision loop
 
 Run `figures.py preview TEXT`: it writes a PNG of each figure for a light and a dark screen (without playwright, an HTML file to open in a browser). Look at each picture once against its claim and **read the pixels**. Then **score what you SEE, not what you know the code does**, against this CLOSED defect table:

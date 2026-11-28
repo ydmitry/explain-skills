@@ -146,7 +146,7 @@ SVG paints in document order — there is no `z-index`. Put dividers, connectors
        vector-effect is non-inherited and only applies to graphics elements, so it
        must live on the <line>, NOT the <g> — on a container it is a silent no-op. -->
   <g class="decor">
-    <line x1="360" y1="24" x2="360" y2="216" style="stroke:var(--border)" stroke-dasharray="4 4"
+    <line x1="360" y1="24" x2="360" y2="216" style="stroke:var(--muted-line)" stroke-dasharray="4 4"
           vector-effect="non-scaling-stroke"/>
   </g>
   <!-- items SECOND: boxes + text paint on top of the divider -->

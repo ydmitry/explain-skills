@@ -35,7 +35,8 @@ The tokens are listed in `assets/tokens.css`, with a value for a light and for a
 |---|---|
 | `--surface` | the ground behind the figure |
 | `--bg` | the fill of a card, node or empty track on that ground |
-| `--border` | hairlines, dividers, outlines of neutral shapes |
+| `--border` | hairlines and outlines of neutral shapes: decoration a reader may miss without loss (about 1.2:1 on a light screen, 1.3:1 on a dark one) |
+| `--muted-line` | a line the claim leans on without being a mark: the divider of a before and after, the rail of a shared scale (about 1.8:1 light, 2.1:1 dark) |
 | `--text`, `--text-dim`, `--muted` | label ink, secondary ink, the neutral mark |
 | `--ok`, `--warn`, `--error`, `--info` | the four valence hues |
 | `--accent`, `--accent-fg` | the one accent, and legible text on a fill of it |
