@@ -16,7 +16,7 @@ Five work on the words: one writes the text so that it is easy to skim, one clea
 | After the readers | `draw-figures` | draws each figure the text marks, with labels taken from the text |
 | Last, for a page | `render-page` | turns the text into one HTML page that says what the text says |
 
-An eighth, `explain-well`, owns no part of the text: it is a command that runs the seven in this order.
+An eighth, `explain-well`, owns no part of the text: it is a command that runs the seven in this order. A ninth, `show-well`, is the same command with the figures and the page always made.
 
 ## Install
 
@@ -31,7 +31,7 @@ claude plugin marketplace add ydmitry/explain-skills
 claude plugin install explain@explain-skills
 ```
 
-The skills are then `/explain:skimmable-writing`, `/explain:deslop-prose`, `/explain:keep-sources`, `/explain:check-sources`, `/explain:cold-read`, `/explain:draw-figures` and `/explain:render-page`. Claude also picks one up by itself when a request fits its description. `/explain:explain-well` runs them all in order, and only you can call it.
+The skills are then `/explain:skimmable-writing`, `/explain:deslop-prose`, `/explain:keep-sources`, `/explain:check-sources`, `/explain:cold-read`, `/explain:draw-figures` and `/explain:render-page`. Claude also picks one up by itself when a request fits its description. `/explain:explain-well` runs them all in order, and only you can call it. `/explain:show-well` does the same and always ends with the page.
 
 To use one without the plugin, copy its folder from `skills/` into `~/.claude/skills/`. **The scripts need Python 3 and nothing else.** Two of them, in `draw-figures` and `render-page`, also measure in a headless browser when the `playwright` package is installed, and say so when it is not.
 
@@ -128,6 +128,14 @@ The page adds a list of its sections and two switches. One follows a light or a 
 **One command that runs the seven skills in order on a text someone will rely on.** It holds the order, when a step is skipped and when to stop, and it repeats no rule of the other skills.
 
 The two readers run after every other edit, each at most twice. The report then shows the line each step printed, what the readers found, and what is still open. Claude never starts it on its own: you call it as `/explain:explain-well`.
+
+It is not measured.
+
+## show-well
+
+**`explain-well` that always ends with a page.** It looks for the claims worth a figure, draws them, renders the text as a page and opens it. You call it as `/explain:show-well`, with what to show.
+
+Its subject is the one thing you point at: "show me that" means the last message, not the whole session.
 
 It is not measured.
 
