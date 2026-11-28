@@ -68,7 +68,8 @@ is a finding, and a read that passes proves little.
 3. Compare its `point:` with your sentence; apply What blocks. Fix every blocking gap, and a minor one when its fix is a
    line, by adding (the point on the first screen, a gloss, a reason, the next step); cut only what a `cut:` names.
 4. After a blocking read and your fixes, one more read by a new subagent. Two reads at most; then show the document
-   with three lines: what the reader got, what you changed, what is still open.
+   with four lines: what the reader got, what you changed, what is still open, and what the read cannot show (the
+   reader was a model, so a person may still get stuck where it did not).
 5. Keep each reader's reply whole where whoever judges your work can open it: in the notes directory when your
    instructions give one (`cold-read-1.md`, `cold-read-2.md`, the document's path on top), else in your reply. A judge
    cannot open your subagent's session, and a summary of its lines is not the read.
