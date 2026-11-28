@@ -40,6 +40,7 @@ The skill's list of shapes names each shaped claim (`SKILL.md`, "Which claims ge
 |---|---|
 | `n-of-m fill` | `Ring / arc gauge from one number` (part-of-whole, "3 of 8") |
 | `filled track` | `Filled track (a share of a whole)` |
+| `pie` | `Pie (a whole split into a few parts)` |
 | `threshold meter` | `Threshold meter (a value against a limit)` |
 | `zones-with-wall` | *no catalog entry: build from S4 and the S6 zone tints* (tint **plus** a boundary at each end) |
 | `paired diff` | `Comparison pair` (or the Gap primitive, S5: `Before / after "Gap" primitive`) |
@@ -217,6 +218,7 @@ Before you choose shapes, name the **relationship or behaviour** in the idea and
 | separates into phases | break | stacked bands with deliberate gutters between them |
 | fuzzy / overlapping sets | overlapping clouds | soft translucent regions that intersect |
 | part of a whole / coverage | filled track / gauge | a value filling a fixed track |
+| a whole split into a few parts | pie | slices of one disc, each with its number |
 
 **Hard rule: each major concept of a text uses a DIFFERENT metaphor.** A text where every figure is the same row of cards has thrown away the one thing a drawn figure buys: that the *shape itself* is information. If three claims all want "the Gap", two of them are probably the same claim, or two of them should stay sentences.
 

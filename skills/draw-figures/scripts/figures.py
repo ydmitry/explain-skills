@@ -32,6 +32,8 @@ PHONE_WIDTH = 400  # a page shrinks a figure to four fifths and then scrolls it:
 MIN_FONT = 12      # units; a page shows a figure down to four fifths of its size, and 12 x 0.8 stays above 9.5 pixels
 SHRINK = 0.8       # so the figures are measured at that size
 MIN_CLAIM = 4      # words; a shorter mark names a medium and states no claim
+MAX_LABEL = 7      # words in one label, and
+MAX_WORDS = 20     # words on a whole figure: house style, from the figures picked in a blind look; a label is scanned
 MARK = re.compile(r"Figure:\s+(\S.*?)\s*$")
 IMAGE = re.compile(r"!\[.*\]\(\s*<?([^()<>]+?)>?\s*\)\s*$")
 ROOT = re.compile(r"<svg\b(?:[^>\"']|\"[^\"]*\"|'[^']*')*>")
@@ -190,7 +192,7 @@ def view_box(root):
     return (nums[2], nums[3]) if len(nums) == 4 and None not in nums and nums[2] > 0 and nums[3] > 0 else None
 
 
-VALUE_SHAPES = ("n-of-m fill", "filled track", "threshold meter")   # shapes whose geometry is a number
+VALUE_SHAPES = ("n-of-m fill", "filled track", "threshold meter", "pie")   # shapes whose geometry is a number
 
 
 def value_findings(root, allowed_n, shape) -> list:
@@ -402,6 +404,14 @@ def source_findings(mark: dict, path: Path, text_tokens, block) -> list:
         if missing:
             problem("value-not-drawn", f"the brief's data has {', '.join(missing)} and the figure does not show it "
                     '(a number outside parentheses on the data line is a value to draw: write "the top row", not "row 1")')
+    counts = [len(label.split()) for label in shown]
+    for label, n in zip(shown, counts):
+        if n > MAX_LABEL:
+            out.append(("WARN", fid, "label-long", f'"{" ".join(label.split())[:60]}" is {n} words; {MAX_LABEL} at most: a label is '
+                        "scanned, not read, so shorten it or leave the sentence to the text"))
+    if sum(counts) > MAX_WORDS:
+        out.append(("WARN", fid, "words-many", f"the figure holds {sum(counts)} words; about {MAX_WORDS} at most: keep the ones a "
+                    "reader takes in at a look"))
     if words - allowed_w:
         problem("new-words", f"neither the text nor the brief has: {', '.join(sorted(words - allowed_w))}")
     if numbers - allowed_n:

@@ -396,6 +396,30 @@ One track for the whole and one fill for the share: `fill width = share / whole 
 
 The fill is `--info`, not a verdict hue: a share is neither good nor bad until the text says so. Several shares of different wholes get one track each, all of one length, stacked.
 
+### Pie (a whole split into a few parts)
+
+The form a reader expects for a whole in two to five parts. Each slice is a circle drawn as one thick stroke: with `r` half of the pie's radius and `stroke-width` twice `r`, the stroke fills the disc, `pathLength="100"` makes the dashes percent, and `stroke-dashoffset` is minus what the slices before it took. Each slice carries its number, and the check compares the two.
+
+```xml
+<!-- 22, 12 and 6 of 40: 55%, 30%, 15%; the offsets are 0, -55, -85 -->
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 360 200" role="img"
+     aria-label="Of the 40 hours, 22 went to planned work, 12 to incidents and 6 to meetings.">
+  <g transform="translate(100 100) rotate(-90)" style="fill:none; stroke-width:80">
+    <circle r="40" pathLength="100" stroke-dasharray="55 100" stroke-dashoffset="0" data-value="22" data-of="40" style="stroke:var(--info)"/>
+    <circle r="40" pathLength="100" stroke-dasharray="30 100" stroke-dashoffset="-55" data-value="12" data-of="40" style="stroke:var(--warn)"/>
+    <circle r="40" pathLength="100" stroke-dasharray="15 100" stroke-dashoffset="-85" data-value="6" data-of="40" style="stroke:var(--muted)"/>
+  </g>
+  <rect x="206" y="69" width="12" height="12" rx="2" style="fill:var(--info)"/>
+  <text x="226" y="80" font-size="14">22 planned work</text>
+  <rect x="206" y="93" width="12" height="12" rx="2" style="fill:var(--warn)"/>
+  <text x="226" y="104" font-size="14">12 incidents</text>
+  <rect x="206" y="117" width="12" height="12" rx="2" style="fill:var(--muted)"/>
+  <text x="226" y="128" font-size="14">6 meetings</text>
+</svg>
+```
+
+Put each part's number beside its name, in the order of the slices, and give each label the colour key of its slice (a small square of the same token) when the slices are more than two. More than five parts, or parts that must be compared with each other exactly, are bars.
+
 ### Ring / arc gauge from one number
 
 One `<circle fill="none">` with `stroke-dasharray` set to `[shown, total]`. The dash math is the whole trick: the visible stroke length equals `pct × circumference`, so the model never reasons about angles or arc flags.

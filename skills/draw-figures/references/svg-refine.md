@@ -50,6 +50,8 @@ When a value must be *read* off the figure, the visual channel you pick determin
 
 Position on a shared scale is read best and area worst. A repeat of the original experiment found angle no worse than length.
 
+That ranking is about reading a magnitude exactly. **A pie is still the form a reader expects for a whole split into a few parts,** and an expected form is read before a word is: draw the pie there, with each part's number on it, and keep bars for values that are compared with each other.
+
 The actionable consequence for concept-viz: **bars on a shared baseline (position) > pie (angle) > bubble (area)** for the same comparison. Prefer a bar or a dot-on-a-shared-baseline over a pie or a cloud of circles whenever the reader is meant to compare magnitudes. Reserve area and color for *secondary* or categorical encodings, never the primary quantitative read.
 
 **If size must carry a value, scale by AREA, not radius.** The eye reads a disk's area; setting `r ∝ value` makes a 4× value look ~16× bigger — a silent lie. Use `r ∝ √value`:

@@ -397,6 +397,34 @@ class Measured(Folder):
         self.assertTrue((shots / "preview.html").exists())
 
 
+class Scans(Folder):
+    """Everything on a figure is scanned, not read: a long label and a crowd of words are listed."""
+
+    def test_the_good_figure_gets_neither_warning(self):
+        self.draw()
+        code, out = self.check()
+        self.assertNotIn("label-long", out)
+        self.assertNotIn("words-many", out)
+
+    def test_a_label_of_more_than_seven_words_is_a_warning(self):
+        self.draw(GOOD.replace(">all 8 pass<", ">all 8 pass and all 8 pass and all<"))
+        code, out = self.check()
+        self.assertIn("WARN fig-1: label-long", out)
+        self.assertIn("9 words", out)
+
+    def test_more_than_twenty_words_on_a_figure_is_a_warning(self):
+        more = "".join(f'<text class="lbl" x="10" y="{100 + i}">all 8 pass</text>' for i in range(7))
+        self.draw(GOOD.replace("</svg>", more + "</svg>"))
+        code, out = self.check()
+        self.assertIn("WARN fig-1: words-many", out)
+        self.assertNotIn("label-long", out)
+
+    def test_a_pie_with_no_number_on_its_slices_is_listed(self):
+        self.draw(brief=BRIEF.replace("shape: the Gap", "shape: pie"), svg=GOOD.replace(' data-value="3" data-of="8"', "").replace(' data-value="8" data-of="8"', ""))
+        code, out = self.check()
+        self.assertIn("values-not-marked", out)
+
+
 if __name__ == "__main__":
     unittest.main()
 

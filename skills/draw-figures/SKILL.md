@@ -34,13 +34,16 @@ A mark that already stands in the text and fails a test is not drawn. Say so in 
 | steps in order, eight nodes at most | `small flow` |
 | a boundary, something kept out | `zones-with-wall` |
 | a count out of a total | `n-of-m fill` |
-| a share of a whole | `filled track` |
+| one share of a whole | `filled track` |
+| a whole split into a few parts | `pie` |
 | a limit that is crossed or held | `threshold meter` |
 | a change over time | `trend line` |
 | two versions that must agree | `paired diff` |
 | a thing with named parts | `labeled anatomy` |
 | two independent axes | `2x2` |
 | a position between two poles | `spectrum` |
+
+**Where readers expect a form, use it.** A whole split into a few parts is a pie. Calls between parts in order are lanes with arrows between them. Dates are a line of time. A reader knows how to read these before reading a word, so a shape of your own is for a claim that no expected form fits.
 
 A claim that fits none of these and still passes both tests is a `one-off metaphor`. Rows and columns of values are a table, never a figure. One figure carries one claim: three claims are three figures.
 
@@ -77,6 +80,16 @@ Figure: Before the guard 60% of the runs were covered, after it 95%.
 The check lists a word or a number that stands in neither.
 
 In the brief, what stands in parentheses is the pointer to the place: it allows no label, and the check does not look it up. Take the text's word for it. If the figure needs a word the text lacks, the text is missing it: add it there, where a reader will read it.
+
+## A figure is scanned, not read
+
+**A figure does not win by saying more. It wins by what a reader takes in at a look.**
+
+- **A label is a few words:** seven at most, and about twenty on the whole figure. The check lists a longer label and a fuller figure as a `WARN`.
+- **What needs a sentence stays in the text** beside the figure, where the mark's line already says it.
+- **A part of the idea that the plain shapes do not show gets something that shows it:** a crossed line where nothing passes, a second bar for the plan, a place outside the group. A drawn hint scans faster than a phrase.
+
+The two numbers are house style. They come from the figures that were picked in a blind look at drawn figures, not from a study.
 
 ## The file
 
