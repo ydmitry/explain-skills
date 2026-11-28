@@ -28,6 +28,7 @@ import render  # noqa: E402
 
 WORD = re.compile(r"[^\W_]+")
 WIDTHS = (320, 360, 768)
+PHONE = 390         # the screen a figure is tried on: one that does not show whole there is a warning
 MIN_FONT = 9.5
 
 
@@ -108,12 +109,12 @@ def first_difference(page: list, text: list) -> str:
 
 
 def measure(page_path: Path):
-    """(problems, why it did not run)."""
+    """(problems, warnings, why it did not run)."""
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        return None, f"the playwright package is not importable from {sys.executable}; install it only where your instructions allow"
-    found = []
+        return None, [], f"the playwright package is not importable from {sys.executable}; install it only where your instructions allow"
+    found, warned = [], []
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch()
@@ -141,10 +142,20 @@ def measure(page_path: Path):
                     found += [("small-text", f"at 360 wide {s}") for s in small]
                 found += [("console", e) for e in errors]
                 page.close()
+            page = browser.new_page(viewport={"width": PHONE, "height": 900})
+            page.goto(page_path.resolve().as_uri())
+            page.wait_for_timeout(150)
+            cut = page.evaluate("""() => [...document.querySelectorAll('.fig')].flatMap(f => {
+                const svg = f.querySelector('svg');
+                if (!svg || f.scrollWidth <= f.clientWidth + 1) return [];
+                return [svg.id + ': shown ' + Math.round(svg.getBoundingClientRect().width) + ' px wide in a frame ' + f.clientWidth + ' px wide']; })""")
+            warned += [("figure-cut-off", f"{c} on a {PHONE} px screen, so its right part is hidden until it is scrolled: "
+                        "draw it 400 units wide or less, or say that the page is not read on a phone") for c in cut]
+            page.close()
             browser.close()
     except Exception as exc:
-        return None, f"the browser did not start ({str(exc).splitlines()[0]})"
-    return found, ""
+        return None, [], f"the browser did not start ({str(exc).splitlines()[0]})"
+    return found, warned, ""
 
 
 def main(argv=None) -> int:
@@ -176,9 +187,9 @@ def main(argv=None) -> int:
         problems.append(("network", "a stylesheet asks for a file from the web"))
     if fresh is not None and seen.figures != made.nfig:
         problems.append(("figures", f"the text has {made.nfig} mark(s) and the page holds {seen.figures} figure(s)"))
-    measured = False
+    measured, warnings = False, []
     if not a.no_measure:
-        found, why = measure(a.page)
+        found, warnings, why = measure(a.page)
         if found is None:
             print(f"NOTE measured checks did not run: {why}")
         else:
@@ -186,8 +197,11 @@ def main(argv=None) -> int:
             problems += found
     for kind, detail in problems:
         print(f"PROBLEM {kind} {detail}")
+    for kind, detail in warnings:
+        print(f"WARN {kind} {detail}")
     print(f"words={len(seen.words)}")
     print(f"measured={'yes' if measured else 'no'}")
+    print(f"warnings={len(warnings)}")
     print(f"problems={len(problems)}")
     return 1 if problems else 0
 

@@ -37,8 +37,8 @@ The skill's list of shapes names each shaped claim (`SKILL.md`, "Which claims ge
 | Shape name in the brief | `svg-shapes.md` heading to read, or the build path |
 |---|---|
 | `n-of-m fill` | `Ring / arc gauge from one number` (part-of-whole, "3 of 8") |
-| `filled track` | *no catalog entry: a straight track*, as the example under "`currentColor` + class recolour" in `svg-color.md` (S6) draws it: a track `<rect>` and a fill `<rect>` of `value × track width` |
-| `threshold meter` | *no catalog entry: build from S4* (`<rect>` track + fill + a threshold rule and its label) |
+| `filled track` | `Filled track (a share of a whole)` |
+| `threshold meter` | `Threshold meter (a value against a limit)` |
 | `zones-with-wall` | *no catalog entry: build from S4 and the S6 zone tints* (tint **plus** a boundary at each end) |
 | `paired diff` | `Comparison pair` (or the Gap primitive, S5: `Before / after "Gap" primitive`) |
 | `the Gap` | `Before / after "Gap" primitive` (S5) |
@@ -151,7 +151,7 @@ What makes this more than a generic diagram:
 ### viewBox and restraint
 
 - Use **`viewBox="0 0 W H"`, never a typed `width`/`height`**: one unit is one CSS pixel at full size, so 12-unit text is 12px text. The integer coordinate space keeps geometry deterministic (S4). A page shows a figure at that size or smaller, never larger.
-- **Width 720 at most.** That is the width of a page's text column. A figure that needs less is drawn narrower. **On a phone a figure wider than about 400 units does not show whole:** a page shrinks it to four fifths and then scrolls it sideways in its frame, and the check reports neither. A text that will be read on a phone gets figures 400 wide or less, with their bands stacked; say the width on the brief's `canvas:` line.
+- **Width 720 at most.** That is the width of a page's text column. A figure that needs less is drawn narrower. **On a phone a figure wider than about 400 units does not show whole:** a page shrinks it to four fifths and then scrolls it sideways in its frame. The check warns of such a figure (`wide-for-phone`), and the page check warns when a figure is cut off on a 390 px screen. A text that will be read on a phone gets figures 400 wide or less, with their bands stacked; say the width on the brief's `canvas:` line.
 - **Token-driven, one calm emphasis over neutrals.** The only saturated hues are the semantic ones, and emphasis that carries no verdict uses `var(--info)` (see the S6 accent rule). No violet or fuchsia in any slot.
 - **Static.** No SMIL (`<animate>`), no motion, no interaction.
 

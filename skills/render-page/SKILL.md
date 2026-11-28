@@ -21,7 +21,7 @@ A page is the text, shown: the same words in the same order, with its figures in
 `TEXT` is the Markdown file.
 
 1. **`python3 ${CLAUDE_SKILL_DIR}/scripts/render.py TEXT`** writes the page beside the text, with the same name and `.html`. `-o PAGE` writes it elsewhere. A text with no `# ` title needs `--title "..."`.
-2. **`python3 ${CLAUDE_SKILL_DIR}/scripts/page_check.py PAGE TEXT`** until it prints `problems=0`.
+2. **`python3 ${CLAUDE_SKILL_DIR}/scripts/page_check.py PAGE TEXT`** until it prints `problems=0`. Fix a line that starts `WARN` too, or say why it stays.
 3. **Open the page** and look at it once, at a phone's width as well as a wide one, when you have a way to look.
 
 When the renderer prints `ERROR line N`, it wrote no page. Fix that line of the text: the message says how.
@@ -61,7 +61,7 @@ The measured part needs the `playwright` package. Without it the check prints `m
 
 **A figure is shown at the size it was drawn, never larger.** On a narrow screen it shrinks to four fifths of that size and then scrolls sideways inside its own frame, so its labels stay readable and the page itself never scrolls sideways.
 
-A figure about 400 units wide or less shows whole on a phone. The check does not report a wider one.
+A figure about 400 units wide or less shows whole on a phone. **The check warns of a figure that is cut off on a 390 px screen:** a line `WARN figure-cut-off` and a count in `warnings=N`. Have it redrawn narrower with `draw-figures`, or say in your report that the page is not read on a phone.
 
 ## The look of the page
 

@@ -446,3 +446,34 @@ class RelativePaths(Folder):
         self.draw()
         code, out = run(F, "preview", "text.md", "--out", "shots", cwd=self.root)
         self.assertTrue((self.root / "shots" / "fig-1.png").exists(), out)
+
+
+class PhoneWidth(Folder):
+    def test_a_figure_drawn_wider_than_a_phone_shows_is_a_warning(self):
+        self.draw(GOOD.replace('viewBox="0 0 320 120"', 'viewBox="0 0 560 120"'))
+        code, out = self.check()
+        self.assertIn("WARN fig-1: wide-for-phone", out)
+        self.assertEqual(self.last(out), "problems=0")
+        self.assertEqual(code, 0, out)
+
+    def test_a_figure_400_wide_is_no_warning(self):
+        self.draw(GOOD.replace('viewBox="0 0 320 120"', 'viewBox="0 0 400 120"'))
+        code, out = self.check()
+        self.assertNotIn("wide-for-phone", out)
+
+
+class TwoLabelsNearEachOther(Folder):
+    NEAR = GOOD.replace('<text class="lbl" x="184" y="84">all 8 pass</text>',
+                        '<text class="lbl" x="27" y="103">all 8 pass</text>')
+
+    def test_two_labels_that_do_not_line_up_are_not_called_one_split_label(self):
+        self.draw(self.NEAR)
+        code, out = run(F, "check", self.text)
+        self.assertNotIn("split-label", out)
+        self.assertIn("WARN fig-1: text-collision", out)
+        self.assertIn("move", out)
+
+    def test_two_lines_on_one_x_are_still_a_split_label(self):
+        self.draw(self.NEAR.replace('x="27" y="103"', 'x="24" y="103"'))
+        code, out = run(F, "check", self.text)
+        self.assertIn("WARN fig-1: split-label", out)

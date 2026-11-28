@@ -6,7 +6,8 @@
 > cycle · Comparison pair · Phase / funnel · Layered stack · Causal DAG · Venn · Spectrum · Pyramid ·
 > Heat-grid · Swimlane. The primitives, `## Copy-paste solved-arithmetic primitives (the math
 > pre-solved)`, which opens with the house rules and the gutter slots: S5 · Near-universal primitives:
-> the Gap + Semantic arrowheads · Before / after "Gap" primitive · Semantic arrowheads · Ring / arc
+> the Gap + Semantic arrowheads · Before / after "Gap" primitive · Semantic arrowheads · Threshold meter (a
+> value against a limit) · Filled track (a share of a whole) · Ring / arc
 > gauge from one number · Inline sparkline (semantic) · Slopegraph (before / after on one shared scale)
 > · Grouped-bar value labels · Texture / hatch fill as a second channel.
 > `grep -n '^##' references/svg-shapes.md` prints every heading with its line, so a ranged read takes
@@ -263,7 +264,7 @@ onto one cluster, overprinting the markers and each other: the exact shape this 
 
 ### S5 · Near-universal primitives: the Gap + Semantic arrowheads
 
-The before-after **Gap** and the **Semantic arrowheads** primitives come first: nearly every text with figures reaches for one or both. The rest of the solved-arithmetic catalog (**ring / arc gauge, inline sparkline, slopegraph, grouped-bar value labels, texture / hatch fill**) follows them, and the **gutter-slot** label-allocation recipe precedes them; grep the primitive's `###` heading. Both primitives below share the usual house rules: token-driven fills (S6, never raw hexes), the figure file of S0, `role="img"` + an `aria-label` that is the mark's sentence and states the finding, and ids that start with `fig-N-` so `url(#id)` never collides.
+The before-after **Gap** and the **Semantic arrowheads** primitives come first: nearly every text with figures reaches for one or both. The rest of the solved-arithmetic catalog (**threshold meter, filled track, ring / arc gauge, inline sparkline, slopegraph, grouped-bar value labels, texture / hatch fill**) follows them, and the **gutter-slot** label-allocation recipe precedes them; grep the primitive's `###` heading. Both primitives below share the usual house rules: token-driven fills (S6, never raw hexes), the figure file of S0, `role="img"` + an `aria-label` that is the mark's sentence and states the finding, and ids that start with `fig-N-` so `url(#id)` never collides.
 
 ---
 ### Before / after "Gap" primitive
@@ -349,6 +350,51 @@ head on a grey or green edge reads as a third, unexplained encoding; the usual c
 Marker `refX`/`orient`/`markerUnits` pitfalls (heads vanishing on thin lines, `marker-mid` not firing on `<line>`) are catalogued in the PATTERN→FIX catalog (**`references/svg-repair.md`**) — reach for the self-contained `<path>` head whenever portability matters more than reuse.
 
 ---
+
+### Threshold meter (a value against a limit)
+
+Tracks on **one scale** with the limit drawn across them as a rule: the claim is on which side of the rule each value ends. Map a value to `x = X0 + v / MAX × TRACK`; the rule sits at the limit's own `x`, so the distance from a bar's end to the rule is the margin, drawn to scale. Colour says the verdict and the rule says it again: a bar that crosses is the failing tone, one that stops short the passing tone.
+
+```xml
+<!-- scale 0..700 ms on a 320-wide track from x=40: 620 → 323.4, 410 → 227.4, the limit 500 → 268.6 -->
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 400 140" role="img"
+     aria-label="Before the change the p95 was 620 ms, over the limit of 500 ms, and after it 410 ms, under the limit.">
+  <defs>
+    <style>
+      #fig-1 .lbl   { font-size: 13px; }
+      #fig-1 .track { fill: var(--bg); stroke: var(--border); }
+      #fig-1 .rule  { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 4; }
+    </style>
+  </defs>
+  <text class="lbl" x="40" y="28">before · 620 ms</text>
+  <rect class="track" x="40" y="36" width="320" height="14" rx="3"/>
+  <rect x="40" y="36" width="283.4" height="14" rx="3" style="fill:var(--error)"/>
+  <text class="lbl" x="40" y="80">after · 410 ms</text>
+  <rect class="track" x="40" y="88" width="320" height="14" rx="3"/>
+  <rect x="40" y="88" width="187.4" height="14" rx="3" style="fill:var(--ok)"/>
+  <!-- the limit: one rule through both tracks, its label under it -->
+  <line class="rule" x1="268.6" y1="30" x2="268.6" y2="110"/>
+  <text class="lbl" x="268.6" y="128" text-anchor="middle" style="fill:var(--muted-ink)">limit 500 ms</text>
+</svg>
+```
+
+The scale starts at zero (S8 §5: a cut baseline exaggerates the margin). With one value only, draw one track; with a limit that must be reached, not kept under, the tones swap and the geometry stays.
+
+### Filled track (a share of a whole)
+
+One track for the whole and one fill for the share: `fill width = share / whole × TRACK`. Length is read more exactly than an arc, so prefer it to the ring when the figure has room for a line of text above the bar.
+
+```xml
+<!-- 350 of 500 on a 320-wide track: 350 / 500 × 320 = 224 -->
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 400 76" role="img"
+     aria-label="350 GB of the disk's 500 GB is used.">
+  <text x="40" y="28" font-size="13">350 of 500 GB used</text>
+  <rect x="40" y="38" width="320" height="16" rx="3" style="fill:var(--bg); stroke:var(--border)"/>
+  <rect x="40" y="38" width="224" height="16" rx="3" style="fill:var(--info)"/>
+</svg>
+```
+
+The fill is `--info`, not a verdict hue: a share is neither good nor bad until the text says so. Several shares of different wholes get one track each, all of one length, stacked.
 
 ### Ring / arc gauge from one number
 

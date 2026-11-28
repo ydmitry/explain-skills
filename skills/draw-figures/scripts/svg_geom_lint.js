@@ -66,10 +66,14 @@
         const sep = Math.max(gapX, gapY) / scale;   // <0 = true overlap
         if (sep < 3) {
           const sameParent = texts[i].el.parentNode === texts[j].el.parentNode;
-          const aligned =                                        // centered, left- or right-aligned stack
-            Math.abs((a.left + a.right) - (b.left + b.right)) / 2 / scale < 4 ||
-            Math.abs(a.left - b.left) / scale < 4 ||
-            Math.abs(a.right - b.right) / scale < 4;
+          // centered, left- or right-aligned stack. Two lines of one label share an x, so when the
+          // boxes do not even touch (sep >= 0) only a pair lined up within a unit counts as one label:
+          // a row's label and the value at the end of its bar are near each other and are two labels.
+          const tol = sep >= 0 ? 1 : 4;
+          const aligned =
+            Math.abs((a.left + a.right) - (b.left + b.right)) / 2 / scale < tol ||
+            Math.abs(a.left - b.left) / scale < tol ||
+            Math.abs(a.right - b.right) / scale < tol;
           const stacked = gapY >= gapX && aligned;
           const sameBaseline = gapX >= gapY &&
             Math.abs(a.bottom - b.bottom) / scale < 2;
@@ -83,7 +87,9 @@
             push(sep < 0 ? 'error' : 'warn', { svg: name, type: 'text-collision',
               gap_units: +sep.toFixed(2),
               a: texts[i].el.textContent.trim().slice(0, 36),
-              b: texts[j].el.textContent.trim().slice(0, 36) });
+              b: texts[j].el.textContent.trim().slice(0, 36),
+              detail: sep < 0 ? 'the two labels overlap: move one' :
+                'the two labels do not touch but stand under 3 units apart: move one away' });
           }
         }
       }

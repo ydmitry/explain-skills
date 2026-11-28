@@ -28,6 +28,7 @@ HERE = Path(__file__).resolve().parent
 SVG_NS = "http://www.w3.org/2000/svg"
 XLINK = "{http://www.w3.org/1999/xlink}href"
 MAX_WIDTH = 720    # a page's text column: one viewBox unit is one CSS pixel at full size
+PHONE_WIDTH = 400  # a page shrinks a figure to four fifths and then scrolls it: 400 x 0.8 fits a phone's column
 MIN_FONT = 12      # units; a page shows a figure down to four fifths of its size, and 12 x 0.8 stays above 9.5 pixels
 SHRINK = 0.8       # so the figures are measured at that size
 MIN_CLAIM = 4      # words; a shorter mark names a medium and states no claim
@@ -216,6 +217,10 @@ def source_findings(mark: dict, path: Path, text_tokens, block) -> list:
     else:
         if box[0] > MAX_WIDTH:
             problem("too-wide", f"the viewBox is {box[0]:g} wide; {MAX_WIDTH} at most")
+        elif box[0] > PHONE_WIDTH:
+            out.append(("WARN", fid, "wide-for-phone", f"the viewBox is {box[0]:g} wide: on a phone a page shows a figure wider than "
+                        f"{PHONE_WIDTH} cut off until it is scrolled sideways; draw it {PHONE_WIDTH} wide or less with its bands stacked, "
+                        "or say that the text is not read on a phone"))
         for attr, want in (("width", box[0]), ("height", box[1])):
             if root.get(attr) is not None and number(root.get(attr)) != want:
                 problem("typed-size", f'{attr}="{root.get(attr)}"; leave width and height to `place`')

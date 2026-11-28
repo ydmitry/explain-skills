@@ -249,3 +249,20 @@ class RelativePaths(Folder):
         code, out = run(C, "text.html", "text.md", cwd=self.root)
         self.assertIn("measured=yes", out)
         self.assertEqual(code, 0, out)
+
+
+class PhoneWidth(Folder):
+    def test_a_figure_cut_off_on_a_phone_is_a_warning(self):
+        (self.figs / "fig-1.svg").write_text(FIG.replace('viewBox="0 0 320 120"', 'viewBox="0 0 560 120"'))
+        self.render()
+        code, out = run(C, self.page, self.text)
+        self.assertIn("WARN figure-cut-off fig-1", out)
+        self.assertIn("warnings=1", out)
+        self.assertEqual(self.last(out), "problems=0")
+        self.assertEqual(code, 0, out)
+
+    def test_a_figure_that_shows_whole_on_a_phone_is_no_warning(self):
+        self.render()
+        code, out = run(C, self.page, self.text)
+        self.assertNotIn("figure-cut-off", out)
+        self.assertIn("warnings=0", out)

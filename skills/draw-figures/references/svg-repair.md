@@ -108,6 +108,7 @@ Gate 1.5 below; the catalog above matches them to a fix.
 | `no-xmlns` | Add `xmlns="http://www.w3.org/2000/svg"` to the root `<svg>`. |
 | `no-viewbox` | Give the root a `viewBox` of four numbers, `0 0 W H`. |
 | `too-wide` | Draw in a `viewBox` 720 wide or less: resize, re-band or split the figure. |
+| `wide-for-phone` (WARN) | Draw the figure 400 units wide or less, with its bands stacked. In a text that is not read on a phone the warning stays: say so in your report. |
 | `typed-size` | Remove `width` and `height` from the root: only `figures.py place` writes them, from the `viewBox`. |
 | `a11y-missing` | Add `role="img"` and an `aria-label` holding the mark's sentence to the root. |
 | `label-differs` | Copy the mark's sentence into the `aria-label`, or change the mark in the text and then the brief and the label. |
