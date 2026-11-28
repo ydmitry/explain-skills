@@ -221,6 +221,36 @@ depth `d` is `120·d/180`. Those numbers are baked into the polygons below — t
 - *Honest when:* a sequence partitioned by responsible party, where crossing a lane is a real handoff.
 - *Lie:* lanes when everything happens in one lane (it's just a sequence), or lane assignments that are arbitrary rather than ownership.
 - *Build with:* horizontal lane `<rect>`s + step nodes + arrowheads (Semantic arrowheads, S5 in this file). Lanes that hold nine or more steps are split into the claims they hold or given as a nested list (S1, Gate 2).
+- *Reads one way:* time runs left to right, so the first step is the leftmost block and no arrow needs a label to say when it happens. A step that is ruled out is a dashed line with a cross, in the lane where it would have run.
+
+```xml
+<!-- two lanes, four steps; each step sits in the lane of the part that acts, further right when later -->
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 520 172" role="img"
+     aria-label="Every build goes to staging; only a build that a person has approved goes on to production.">
+  <rect x="8" y="8" width="504" height="72" rx="6" style="fill:none; stroke:var(--muted-line)"/>
+  <rect x="8" y="92" width="504" height="72" rx="6" style="fill:none; stroke:var(--muted-line)"/>
+  <text x="20" y="48" font-size="13" font-weight="700">pipeline</text>
+  <text x="20" y="132" font-size="13" font-weight="700">person</text>
+  <rect x="96" y="26" width="84" height="36" rx="6" style="fill:var(--surface); stroke:var(--muted)"/>
+  <text x="138" y="49" font-size="13" text-anchor="middle">build</text>
+  <rect x="212" y="26" width="84" height="36" rx="6" style="fill:var(--surface); stroke:var(--muted)"/>
+  <text x="254" y="49" font-size="13" text-anchor="middle">staging</text>
+  <rect x="300" y="110" width="92" height="36" rx="6" style="fill:var(--surface); stroke:var(--info)"/>
+  <text x="346" y="133" font-size="13" text-anchor="middle">approved</text>
+  <rect x="416" y="26" width="88" height="36" rx="6" style="fill:var(--surface); stroke:var(--muted)"/>
+  <text x="460" y="49" font-size="13" text-anchor="middle">production</text>
+  <g style="fill:none; stroke:var(--muted); stroke-width:1.5">
+    <path d="M180 44 H204"/>
+    <path d="M254 62 V128 H292"/>
+    <path d="M392 128 H460 V70"/>
+  </g>
+  <g style="fill:var(--muted)">
+    <path d="M204 39 L212 44 L204 49 Z"/>
+    <path d="M292 123 L300 128 L292 133 Z"/>
+    <path d="M455 70 L460 62 L465 70 Z"/>
+  </g>
+</svg>
+```
 
 **Rule of thumb:** if the shape's precondition doesn't hold for your data, the shape is the wrong
 choice, not a labelling problem you can write around. Switch shapes (or drop to a sentence, a list

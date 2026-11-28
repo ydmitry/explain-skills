@@ -41,6 +41,7 @@ The skill's list of shapes names each shaped claim (`SKILL.md`, "Which claims ge
 | `n-of-m fill` | `Ring / arc gauge from one number` (part-of-whole, "3 of 8") |
 | `filled track` | `Filled track (a share of a whole)` |
 | `pie` | `Pie (a whole split into a few parts)` |
+| `swimlane` | `Swimlane`, with its example |
 | `threshold meter` | `Threshold meter (a value against a limit)` |
 | `zones-with-wall` | *no catalog entry: build from S4 and the S6 zone tints* (tint **plus** a boundary at each end) |
 | `paired diff` | `Comparison pair` (or the Gap primitive, S5: `Before / after "Gap" primitive`) |

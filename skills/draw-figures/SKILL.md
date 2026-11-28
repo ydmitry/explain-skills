@@ -36,6 +36,7 @@ A mark that already stands in the text and fails a test is not drawn. Say so in 
 | a count out of a total | `n-of-m fill` |
 | one share of a whole | `filled track` |
 | a whole split into a few parts | `pie` |
+| steps that pass between several parts, in order | `swimlane` |
 | a limit that is crossed or held | `threshold meter` |
 | a change over time | `trend line` |
 | two versions that must agree | `paired diff` |
@@ -43,11 +44,17 @@ A mark that already stands in the text and fails a test is not drawn. Say so in 
 | two independent axes | `2x2` |
 | a position between two poles | `spectrum` |
 
-**Where readers expect a form, use it.** A whole split into a few parts is a pie. Calls between parts in order are lanes with arrows between them. Dates are a line of time. A reader knows how to read these before reading a word, so a shape of your own is for a claim that no expected form fits.
-
 A claim that fits none of these and still passes both tests is a `one-off metaphor`. Rows and columns of values are a table, never a figure. One figure carries one claim: three claims are three figures.
 
 An arrow is drawn only for a sequence, a cause or a movement. A reader takes an arrow to mean that something acts or flows, so the parts of a thing and two things compared get none.
+
+## The form a reader expects
+
+**Where readers expect a form, use it.** A whole split into a few parts is a pie. Steps that pass between several parts are swimlanes: a lane for each part, time from left to right. Dates are a line of time.
+
+A reader knows how to read these before reading a word. A shape of your own is for a claim that no expected form fits.
+
+**A sequence shows where it starts and reads one way.** The first step stands at the left, or carries the number 1, and position or a number gives the order. An arrow that needs a label to say when it happens, or that bends around a box, hides the order: draw swimlanes, or number the steps.
 
 ## The mark
 
