@@ -20,13 +20,15 @@ With no source at hand there is nothing to read against. Say so and do not run t
 
 Read last: make every other edit first, `deslop-prose` included. The check is of the text as it will be shown.
 
-**First, the quotes the text shows, by script:** `python3 ${CLAUDE_SKILL_DIR}/scripts/check_sources.py shown TEXT --sources FOLDER --source FILE`. It looks up every passage of four words or more that stands in double quotation marks or in a quoted block, letter for letter.
+## First, by script: what the text shows
+
+**The quotes are looked up:** `python3 ${CLAUDE_SKILL_DIR}/scripts/check_sources.py shown TEXT --sources FOLDER --source FILE`. It looks up every passage of four words or more that stands in double quotation marks or in a quoted block, letter for letter.
 
 Fix each line it lists before the reader starts. A `NEAR` quote was retyped: copy it from the source. A `NOT FOUND` one is in no source: quote the source, or drop the marks when the words are yours.
 
 The same command lists each picture of the text that is not a picture saved in the sources folder, on a line that starts `PICTURE`. A reader takes a picture as proof: save it with `keep-sources` (`snap --image`), or take it out. Such a line does not block, and a drawn figure is not counted.
 
-Then the read:
+## Then the read
 
 1. **Write the brief:** `python3 ${CLAUDE_SKILL_DIR}/scripts/check_sources.py brief TEXT --sources FOLDER --source FILE`. It prints the brief's path. A line that starts `STALE` names a kept row whose quote is no longer in its source: read that source again before going on.
 2. **Dispatch a fresh subagent** with this prompt and nothing from the chat: `You check a text against its sources. You are the reader; dispatch no one. Read <the brief's path> and do exactly what it says. Reply with the blocks it asks for and nothing else.`
