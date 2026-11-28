@@ -195,7 +195,7 @@ VALUE_SHAPES = ("n-of-m fill", "filled track", "threshold meter")   # shapes who
 
 def value_findings(root, allowed_n, shape) -> list:
     """Is each mark that carries its number as data-value drawn in proportion to it? (tier, type, detail)."""
-    out, bars, lines = [], {}, {}
+    out, bars, lines, shares = [], {}, {}, {}
     near = lambda got, want, scale: abs(got - want) <= max(1.5, 0.03 * scale)
     marked = [el for el in root.iter() if el.get("data-value") is not None]
     rects = [el for el in root.iter() if local(el.tag) == "rect" and el.get("data-value") is None]
@@ -229,6 +229,8 @@ def value_findings(root, allowed_n, shape) -> list:
                 got, full = (w, max(box(t)[2] for t in flat)) if flat else (h, max(box(t)[3] for t in tall))
                 if not near(got, full * v / whole, full):
                     out.append(("PROBLEM", "value-mismatch", f"{what} is {got:g} long on a track of {full:g}: {v:g} of {whole:g} is {full * v / whole:g}"))
+                # (units for one of the value, the track's length, is it flat, where it starts)
+                shares.setdefault(el.get("data-scale", ""), []).append((full / whole, full, bool(flat), x if flat else y + h))
             else:
                 out.append(("WARN", "value-no-track", f"{what} has no track to be measured against: draw the whole as a rect "
                             "that starts where the share starts, with the same thickness"))
@@ -238,7 +240,18 @@ def value_findings(root, allowed_n, shape) -> list:
             lines.setdefault(el.get("data-scale", ""), []).append((v, tuple(number(el.get(k)) or 0.0 for k in ("x1", "y1", "x2", "y2")), what))
     for scale in sorted(set(bars) | set(lines)):
         group = bars.get(scale, [])
-        if not group:
+        if not group:                                              # no bars: a limit across a share is read on the track
+            for v, (x1, y1, x2, y2), what in lines.get(scale, []):
+                if not shares.get(scale):
+                    out.append(("WARN", "value-no-scale", f"{what} has no bar or track with a data-value to be measured on: "
+                                "put data-value on the bars it crosses, or take it off the line"))
+                    continue
+                per, full, is_flat, start = shares[scale][0]
+                if abs(x1 - x2 if is_flat else y1 - y2) > 0.5:
+                    continue
+                got = x1 - start if is_flat else start - y1
+                if not near(got, per * v, full):
+                    out.append(("PROBLEM", "value-mismatch", f"{what} stands {got:g} from where the track starts; on its scale {v:g} is {per * v:g}"))
             continue
         flat = all(abs(b[3] - group[0][1][3]) <= 0.5 for _, b, _ in group)
         tall = all(abs(b[2] - group[0][1][2]) <= 0.5 for _, b, _ in group)
@@ -387,7 +400,8 @@ def source_findings(mark: dict, path: Path, text_tokens, block) -> list:
         allowed_w, allowed_n = allowed_w | more_w, allowed_n | more_n
         missing = sorted(tokens(no_pointers(block.get("data")))[1] - numbers)
         if missing:
-            problem("value-not-drawn", f"the brief's data has {', '.join(missing)} and the figure does not show it")
+            problem("value-not-drawn", f"the brief's data has {', '.join(missing)} and the figure does not show it "
+                    '(a number outside parentheses on the data line is a value to draw: write "the top row", not "row 1")')
     if words - allowed_w:
         problem("new-words", f"neither the text nor the brief has: {', '.join(sorted(words - allowed_w))}")
     if numbers - allowed_n:

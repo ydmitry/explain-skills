@@ -362,7 +362,7 @@ Tracks on **one scale** with the limit drawn across them as a rule: the claim is
   <defs>
     <style>
       #fig-1 .lbl   { font-size: 13px; }
-      #fig-1 .track { fill: var(--bg); stroke: var(--border); }
+      #fig-1 .track { fill: var(--bg); stroke: var(--muted-line); }
       #fig-1 .rule  { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 4; }
     </style>
   </defs>
@@ -389,7 +389,7 @@ One track for the whole and one fill for the share: `fill width = share / whole 
 <svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 400 76" role="img"
      aria-label="350 GB of the disk's 500 GB is used.">
   <text x="40" y="28" font-size="13">350 of 500 GB used</text>
-  <rect x="40" y="38" width="320" height="16" rx="3" style="fill:var(--bg); stroke:var(--border)"/>
+  <rect x="40" y="38" width="320" height="16" rx="3" style="fill:var(--bg); stroke:var(--muted-line)"/>
   <rect x="40" y="38" width="224" height="16" rx="3" data-value="350" data-of="500" style="fill:var(--info)"/>
 </svg>
 ```

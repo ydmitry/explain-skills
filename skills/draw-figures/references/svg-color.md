@@ -17,7 +17,7 @@
 
 A figure draws no background and no frame. **Its ground is `--surface`,** in both places it is shown: `figures.py place` writes a block of tokens into the file that paints that ground behind a standalone figure, and a page that shows the figure inline puts it on a panel of the same colour.
 
-So everything you draw is judged against `--surface`. A card, a node or an empty track that should stand out from the ground is filled with `var(--bg)` and outlined with `var(--border)`.
+So everything you draw is judged against `--surface`. A card or a node that should stand out from the ground is filled with `var(--bg)` and outlined with `var(--border)`. An empty track is outlined with `var(--muted-line)`: its extent is the whole the fill is read against, and in `--border` it barely shows.
 
 A panel that only groups other shapes takes no fill (`fill: none`, an outline at most): a filled panel under `--bg` cards hides them, and the check reports it as `zone-invisible`. A zone that an arrow enters is a tint with `fill-opacity`, as below: an opaque box with a label in it counts as a node, and the check reports an edge that crosses it as `edge-through-node`.
 
@@ -103,7 +103,7 @@ Draw geometry with `class=` (or `fill="currentColor"`), and define what those cl
       #fig-3 .mono  { font-family: var(--font-mono); font-size: 12px; }
       #fig-3 .after { fill: var(--ok); }
       #fig-3 .before{ fill: var(--muted); }
-      #fig-3 .track { fill: var(--bg); stroke: var(--border); }
+      #fig-3 .track { fill: var(--bg); stroke: var(--muted-line); }
       #fig-3 .ink-ok   { fill: var(--ok-ink); }
       #fig-3 .ink-mute { fill: var(--muted-ink); }
     </style>

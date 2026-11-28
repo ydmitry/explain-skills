@@ -149,7 +149,7 @@ Every word in it (`PASSES`, `REJECTED`, `name:`, `TODO`, `pass`, `fail`) stands 
 | The mark | Write | The check compares |
 |---|---|---|
 | bars on one scale | `data-value="620"` on each `<rect>`; all of one thickness, starting from zero | each length with its value, against the longest bar |
-| a limit across those bars | `data-value="500"` on the `<line>` | its distance from where the bars start |
+| a limit across those bars, or across a share's track | `data-value="500"` on the `<line>` | its distance from where the bars, or the track, start |
 | a share of a whole | `data-value="350" data-of="500"` on the fill `<rect>`, drawn over a track that starts with it | the fill's length with the track's |
 | a ring filled to a share | `data-value="72" data-of="100"` on the `<circle>` with the `stroke-dasharray` | the dash with the full circle |
 | a row of cells | `data-value="9" data-of="12"` on the `<g>`, and `data-on=""` on each cell that counts | the number of cells, and of cells with `data-on` |

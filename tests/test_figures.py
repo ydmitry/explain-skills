@@ -540,3 +540,24 @@ class DrawnValues(Folder):
         code, out = self.check()
         self.assertIn("WARN fig-1: values-not-marked", out)
         self.assertEqual(code, 0, out)
+
+
+class LimitOnAShare(Folder):
+    SHARE = DrawnValues.BARS.replace('data-value="3"', 'data-value="3" data-of="8"').replace(' data-value="8"', "")
+    LINE = '<line x1="%s" y1="30" x2="%s" y2="70" data-value="8" style="stroke:var(--muted)"/>\n</svg>'
+
+    def test_a_limit_across_a_share_is_measured_on_the_track(self):
+        self.draw(self.SHARE.replace("</svg>", self.LINE % (136, 136)))
+        self.assertNotIn("value-", self.check()[1])
+        self.draw(self.SHARE.replace("</svg>", self.LINE % (100, 100)))
+        self.assertIn("PROBLEM fig-1: value-mismatch", self.check()[1])
+
+    def test_a_line_with_a_value_and_nothing_to_measure_it_on_is_a_warning(self):
+        self.draw(GOOD.replace("</svg>", self.LINE % (100, 100)))
+        self.assertIn("WARN fig-1: value-no-scale", self.check()[1])
+
+    def test_a_layout_number_on_the_data_line_gets_a_hint(self):
+        self.draw(GOOD, BRIEF.replace("data: before 3 of 8", "data: row 1 before 3 of 8"))
+        out = self.check()[1]
+        self.assertIn("value-not-drawn", out)
+        self.assertIn("the top row", out)
