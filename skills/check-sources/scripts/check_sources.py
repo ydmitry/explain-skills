@@ -15,6 +15,8 @@
            The quotes the text shows its reader: words in double quotation marks or in a quoted block (`>`),
            four words or more. Each is looked up in the sources letter for letter. NEAR: most of its words
            stand there in one run, so it was retyped. NOT FOUND: no source holds it. Exit 1 when either is listed.
+           It also lists each picture of the text (a drawn .svg aside) that is not a picture saved in FOLDER:
+           a line PICTURE, which does not block, and `pictures=N saved=M`.
 
 FOLDER is a keep-sources folder (ledger.jsonl and snapshots/). FILE is anything else the text was written
 from: a transcript, notes, a diff, data.
@@ -374,9 +376,44 @@ def lookup(quote: str, source: str) -> str:
     return "near" if a and best / len(a) >= 0.6 else "not found"
 
 
+def shots(text: str) -> list:
+    """(line number, path) of the pictures a text shows: local files that are not drawn figures, outside code."""
+    out, fenced = [], False
+    for i, line in enumerate(text.splitlines(), 1):
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        for m in re.finditer(r"!\[[^\]]*\]\(\s*([^)\s]+)[^)]*\)", re.sub(r"`[^`]*`", " ", line)):
+            target = m.group(1)
+            if not re.match(r"[a-zA-Z][\w+.-]*:", target) and not target.lower().endswith(".svg"):
+                out.append((i, target))
+    return out
+
+
+def saved_pictures(folder) -> set:
+    """The fingerprints of the pictures a keep-sources folder holds."""
+    index = Path(folder) / "snapshots" / "index.json" if folder else None
+    if not index or not index.exists():
+        return set()
+    return {e["sha256"] for e in json.loads(index.read_text()).values() if isinstance(e, dict) and e.get("sha256")}
+
+
 def shown(a) -> int:
-    text = Path(a.text).expanduser().read_text(errors="replace")
+    text_path = Path(a.text).expanduser()
+    text = text_path.read_text(errors="replace")
     files, _, _ = gather(a)
+    pics, known, saved = shots(text), saved_pictures(a.sources), 0
+    for i, target in pics:
+        f = (text_path.parent / target)
+        if f.is_file() and hashlib.sha256(f.read_bytes()).hexdigest() in known:
+            saved += 1
+        else:
+            print(f"PICTURE line {i}: {target} | not a saved source: a reader takes a picture as proof, so save it with "
+                  "keep-sources (`snap --image`, with where and when it was taken), or take it out")
+    if pics:
+        print(f"pictures={len(pics)} saved={saved}")
     source = norm("\n".join(p.read_text(errors="replace") for p in files))
     count = {"found": 0, "near": 0, "not found": 0}
     for i, q in quoted(text):

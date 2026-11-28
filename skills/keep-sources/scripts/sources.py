@@ -4,6 +4,9 @@
     snap  FOLDER NAME [--origin TEXT] [--file PATH | --text TEXT]
           Save text that will not stay (a page, a command's output, what someone said) as
           FOLDER/snapshots/NAME.txt. Without --file or --text it reads standard input.
+    snap  FOLDER NAME --image PATH --origin TEXT
+          Save a screenshot (png, jpg, gif, webp) as FOLDER/snapshots/NAME with its type. The origin says what
+          it shows, where it was taken and when: the picture cannot say that itself.
     add   FOLDER --source PATH --quote TEXT --says TEXT [--near LINE] [--calc TEXT]
           One row in FOLDER/ledger.jsonl. The quote is looked up in the source; that fixes its lines.
     list  FOLDER [--all]
@@ -18,8 +21,10 @@ quote does not hold (--calc "how it follows" records a number that comes by arit
 Exit 0 when there is nothing to fix.
 """
 import argparse
+import hashlib
 import json
 import re
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -128,11 +133,49 @@ def now() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%S")
 
 
+PICTURES = (".png", ".jpg", ".jpeg", ".gif", ".webp")
+
+
+def fingerprint(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def pictures(folder: Path) -> dict:
+    """{file name: its entry} for the pictures saved in a folder."""
+    return {name: e for name, e in origins(folder).items() if isinstance(e, dict) and e.get("sha256")}
+
+
+def snap_image(a, folder: Path) -> int:
+    src = Path(a.image).expanduser()
+    if not src.is_file() or src.suffix.lower() not in PICTURES:
+        print(f"{a.image} is not a picture this folder keeps (png, jpg, gif, webp)")
+        return 1
+    if not (a.origin or "").strip():
+        print("--origin is needed for a picture: what it shows, where it was taken and when")
+        return 1
+    stem = a.name[:-len(src.suffix)] if a.name.lower().endswith(src.suffix.lower()) else a.name
+    name = stem + src.suffix.lower()
+    target = folder / "snapshots" / name
+    if target.exists() and target.read_bytes() != src.read_bytes():
+        print(f"{target} exists with another picture; a snapshot is a record, so pick another name")
+        return 1
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, target)
+    index = origins(folder)
+    index[name] = {"origin": a.origin.strip(), "saved": now(), "sha256": fingerprint(target)}
+    (target.parent / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
+    print(f"{target} ({target.stat().st_size} bytes)")
+    print(f"show it in the text as ![what it shows]({folder.name}/snapshots/{name}), with a line that gives the origin")
+    return 0
+
+
 def snap(a) -> int:
     folder = Path(a.folder)
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", a.name):
         print("name: letters, digits, '.', '_' and '-' only, for example pricing-page")
         return 1
+    if a.image:
+        return snap_image(a, folder)
     if a.text is not None:
         text = a.text
     elif a.file:
@@ -217,7 +260,10 @@ def show(a) -> int:
         gone = f"  [dropped: {r['dropped']}]" if r.get("dropped") else ""
         print(f"{r.get('id')}  {r.get('source')}:{r.get('lines')}  {r.get('says')} | \"{r.get('quote')}\"{gone}")
     live = sum(not r.get("dropped") for r in rows)
-    print(f"rows={live}" + (f" dropped={len(rows) - live}" if len(rows) != live else ""))
+    shots = pictures(Path(a.folder))
+    for name, e in shots.items():
+        print(f"picture  snapshots/{name}  {e.get('origin')}  (saved {e.get('saved')})")
+    print(f"rows={live}" + (f" dropped={len(rows) - live}" if len(rows) != live else "") + (f" pictures={len(shots)}" if shots else ""))
     return 0
 
 
@@ -236,7 +282,7 @@ def drop(a) -> int:
 
 def check(a) -> int:
     folder = Path(a.folder)
-    if not (folder / "ledger.jsonl").exists():
+    if not (folder / "ledger.jsonl").exists() and not pictures(folder):
         print(f"ERROR no ledger in {folder}")
         print("errors=1")
         return 1
@@ -264,7 +310,14 @@ def check(a) -> int:
         why = refuse_says(str(r.get("says", "")), str(r.get("quote", "")), r.get("calc"))
         if why:
             errors.append(f"{rid}: {why.replace('--says', 'says').replace('--calc', 'calc')}")
-    write_rows(folder, rows)
+    if rows:
+        write_rows(folder, rows)
+    for name, e in pictures(folder).items():
+        shot = folder / "snapshots" / name
+        if not shot.is_file():
+            errors.append(f"{name}: the picture is gone")
+        elif fingerprint(shot) != e["sha256"]:
+            errors.append(f"{name}: the picture changed since it was saved; a snapshot is a record, save the new one under another name")
     for e in errors:
         print("ERROR " + e)
     print(f"rows={sum(not r.get('dropped') for r in rows)}")
@@ -281,6 +334,7 @@ def main(argv=None) -> int:
     p.add_argument("--origin", help="where the text came from: a URL, a command, who said it and when")
     p.add_argument("--file")
     p.add_argument("--text")
+    p.add_argument("--image", help="a screenshot to save in place of text; --origin is then needed")
     p.set_defaults(run=snap)
     p = sub.add_parser("add")
     p.add_argument("folder")

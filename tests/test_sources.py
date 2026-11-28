@@ -162,5 +162,64 @@ class ListDropCheck(Case):
         self.assertEqual(self.sh("check", self.work / "empty")[0], 1)
 
 
+class Pictures(Case):
+    """A screenshot is saved as a source, with where and when it was taken."""
+
+    def setUp(self):
+        super().setUp()
+        self.shot = self.work / "shot.png"
+        self.shot.write_bytes(b"\x89PNG\r\n\x1a\n" + b"dashboard at 14:05")
+
+    def snap(self, name="errors-1405", origin="the errors dashboard on staging, 2026-11-28 14:05", image=None):
+        args = ["snap", self.folder, name, "--image", image or self.shot]
+        return self.sh(*args, *(["--origin", origin] if origin else []))
+
+    def test_a_picture_is_copied_with_its_origin_and_a_fingerprint(self):
+        code, out = self.snap()
+        self.assertEqual(code, 0, out)
+        saved = self.folder / "snapshots" / "errors-1405.png"
+        self.assertEqual(saved.read_bytes(), self.shot.read_bytes())
+        entry = json.loads((self.folder / "snapshots" / "index.json").read_text())["errors-1405.png"]
+        self.assertEqual(entry["origin"], "the errors dashboard on staging, 2026-11-28 14:05")
+        self.assertEqual(len(entry["sha256"]), 64)
+        self.assertIn("snapshots/errors-1405.png", out)
+
+    def test_a_picture_without_an_origin_is_refused(self):
+        code, out = self.snap(origin=None)
+        self.assertEqual(code, 1, out)
+        self.assertIn("--origin", out)
+        self.assertFalse((self.folder / "snapshots" / "errors-1405.png").exists())
+
+    def test_a_file_that_is_no_picture_is_refused(self):
+        code, out = self.snap(image=self.work / "config.py")
+        self.assertEqual(code, 1, out)
+        self.assertIn("png", out)
+
+    def test_a_saved_picture_is_not_overwritten_by_another(self):
+        self.snap()
+        other = self.work / "other.png"
+        other.write_bytes(b"\x89PNG another screen")
+        code, out = self.snap(image=other)
+        self.assertEqual(code, 1, out)
+        self.assertIn("pick another name", out)
+
+    def test_list_shows_the_pictures(self):
+        self.snap()
+        code, out = self.sh("list", self.folder)
+        self.assertEqual(code, 0, out)
+        self.assertIn("picture  snapshots/errors-1405.png  the errors dashboard on staging, 2026-11-28 14:05", out)
+        self.assertIn("pictures=1", out)
+
+    def test_check_passes_a_folder_of_pictures_and_catches_a_changed_one(self):
+        self.snap()
+        code, out = self.sh("check", self.folder)
+        self.assertEqual(code, 0, out)
+        self.assertIn("errors=0", out)
+        (self.folder / "snapshots" / "errors-1405.png").write_bytes(b"edited")
+        code, out = self.sh("check", self.folder)
+        self.assertEqual(code, 1, out)
+        self.assertIn("errors-1405.png: the picture changed since it was saved", out)
+
+
 if __name__ == "__main__":
     unittest.main()

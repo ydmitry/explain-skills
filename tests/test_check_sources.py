@@ -233,5 +233,48 @@ class Shown(Case):
         self.assertEqual(out.strip().splitlines()[-1], "shown=0 found=0 near=0 not_found=0")
 
 
+class ShownPictures(Case):
+    """`shown` also says which pictures of the text are saved sources."""
+
+    def setUp(self):
+        super().setUp()
+        self.folder = self.work / "sources" / "job"
+        (self.work / "shot.png").write_bytes(b"\x89PNG the dashboard")
+        code, out = run("keep-sources/scripts/sources.py", "snap", self.folder, "dash", "--image", self.work / "shot.png",
+                        "--origin", "the errors dashboard, staging, 2026-11-28 14:05", cwd=self.work)
+        assert code == 0, out
+
+    def shown(self, text: str):
+        (self.work / "text.md").write_text(text)
+        return self.sh("shown", "text.md", "--sources", self.folder, "--source", "notes.md")
+
+    def test_a_picture_saved_as_a_source_is_counted_as_saved(self):
+        code, out = self.shown("Errors rose.\n\n![the errors dashboard at 14:05](sources/job/snapshots/dash.png)\n")
+        self.assertEqual(code, 0, out)
+        self.assertIn("pictures=1 saved=1", out)
+        self.assertNotIn("PICTURE", out)
+
+    def test_a_copy_of_a_saved_picture_under_another_name_is_saved_too(self):
+        (self.work / "copy.png").write_bytes((self.work / "shot.png").read_bytes())
+        code, out = self.shown("![the dashboard](copy.png)\n")
+        self.assertIn("pictures=1 saved=1", out)
+
+    def test_a_picture_that_is_no_saved_source_is_listed_and_does_not_block(self):
+        (self.work / "nice.png").write_bytes(b"\x89PNG a stock photo")
+        code, out = self.shown("Line.\n\n![a server room](nice.png)\n")
+        self.assertEqual(code, 0, out)
+        self.assertIn("PICTURE line 3: nice.png", out)
+        self.assertIn("pictures=1 saved=0", out)
+
+    def test_a_drawn_figure_and_a_picture_in_code_are_not_counted(self):
+        code, out = self.shown("![Figure: a claim](figures/text/fig-1.svg)\n\n```\n![x](nice.png)\n```\n")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("pictures=", out)
+
+    def test_the_last_line_stays_the_count_of_quotes(self):
+        code, out = self.shown("![the dashboard](sources/job/snapshots/dash.png)\n")
+        self.assertEqual(out.strip().splitlines()[-1], "shown=0 found=0 near=0 not_found=0")
+
+
 if __name__ == "__main__":
     unittest.main()

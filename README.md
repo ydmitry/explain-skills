@@ -76,6 +76,8 @@ One folder holds the record: a row for each fact, with the quoted words, the fil
 
 It ships `scripts/sources.py`. `add` refuses a quote that is not in its source word for word, and a number in the plain-words reading that the quote does not hold. `check` looks every quote up again.
 
+**A screenshot is saved the same way,** for what cannot be quoted: a chart at a moment, a greyed-out button, an error dialog. `snap --image` refuses one that does not say what it shows, where it was taken and when.
+
 A snapshot can hold private data. The folder is working material and is not meant to be committed or published.
 
 ## check-sources
@@ -85,7 +87,7 @@ A snapshot can hold private data. The folder is working material and is not mean
 It ships `scripts/check_sources.py`:
 
 - `brief` writes the reader's instructions: where the text and the sources are, the kept rows, and the numbers and dates of the text that stand in no source.
-- `shown` looks up every quote the text shows its reader, in quotation marks or a quoted block, and lists the ones no source holds letter for letter. It needs no reader.
+- `shown` looks up every quote the text shows its reader, in quotation marks or a quoted block, and lists the ones no source holds letter for letter. It needs no reader. It also lists a picture in the text that was not saved as a source.
 - `quotes` looks the reader's copied words up. A contradiction counts only when its words are really in the text and in a source, and the command exits 0 when none counts.
 
 A counted contradiction blocks. A statement with no source does not: the writer adds the source, marks the statement as a reading, or cuts it.

@@ -24,6 +24,8 @@ Read last: make every other edit first, `deslop-prose` included. The check is of
 
 Fix each line it lists before the reader starts. A `NEAR` quote was retyped: copy it from the source. A `NOT FOUND` one is in no source: quote the source, or drop the marks when the words are yours.
 
+The same command lists each picture of the text that is not a picture saved in the sources folder, on a line that starts `PICTURE`. A reader takes a picture as proof: save it with `keep-sources` (`snap --image`), or take it out. Such a line does not block, and a drawn figure is not counted.
+
 Then the read:
 
 1. **Write the brief:** `python3 ${CLAUDE_SKILL_DIR}/scripts/check_sources.py brief TEXT --sources FOLDER --source FILE`. It prints the brief's path. A line that starts `STALE` names a kept row whose quote is no longer in its source: read that source again before going on.

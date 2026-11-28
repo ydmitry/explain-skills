@@ -46,6 +46,18 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/sources.py add FOLDER --source FOLDER/snapsh
 
 A snapshot is a record: the script will not overwrite one with other text. A second run of a command gets a new name.
 
+## What a screen showed: a screenshot
+
+A state of a screen cannot be quoted: a chart at a moment, a button that is greyed out, an error dialog. **Save the screenshot with what it shows, where it was taken and when.** The picture cannot say that itself, so the script refuses one without it.
+
+```
+python3 ${CLAUDE_SKILL_DIR}/scripts/sources.py snap FOLDER errors-1405 --image /tmp/shot.png --origin "the errors dashboard on staging, 2026-11-28 14:05, after the deploy"
+```
+
+- **Take it of the thing itself,** with the part the fact is about in view. A picture that only looks related proves nothing.
+- **What can be read as text is saved as text too.** A number on a dashboard goes into a row with its quote; the screenshot shows that it stood there.
+- `list` shows the saved pictures, and `check` lists one that was changed or removed.
+
 ## Use the rows
 
 - **Write from the rows.** Before the text states a number, a date or a name, run `python3 ${CLAUDE_SKILL_DIR}/scripts/sources.py list FOLDER` and take it from there.
