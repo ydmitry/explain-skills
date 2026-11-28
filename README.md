@@ -49,6 +49,10 @@ The skill asks for:
 
 It ships `scripts/skim_check.py`. The check prints what a skimming eye sees and lists what breaks the rules above. It also notes, as a count and not a problem, when three or more headings open with the same word.
 
+**The numbers are house style, not findings.** A script needs something to count, so the rules say 60 words, 300 words and one thing in bold. Published studies support the direction and test none of these numbers.
+
+In one study, students recalled underlined sentences better when only those were underlined; with half of the other sentences underlined as well, recall was no better than with no underlining ([Lorch, Lorch and Klusewitz 1995](https://scholars.uky.edu/en/publications/effects-of-typographical-cues-on-reading-and-recall-of-text/), read as the abstract).
+
 Until 2026-11-26 this skill was named `skimmable-markdown`.
 
 ## deslop-prose
@@ -181,6 +185,12 @@ On 2026-11-27 Claude Haiku got a folder with one script and its tests, tools to 
 A script looked each pointer up in the folder: the file is there and has that line. Without the rule no write-up named a line, and both sets named bare file names about as often, 181 and 183 times. The write-ups are as long in both sets.
 
 The limits: one model, and files of 83 to 352 lines. A rough count found a number or a code word of the sentence on the lines named for 63 of the 142 pointers, and that is not a reading of whether a line says what its sentence says.
+
+## A pointer is trusted whether or not it is right
+
+**The pointer rule is safe only together with `check-sources`.** In a study of 303 people who asked a chatbot their own questions, answers with citations were trusted more than answers without, and the abstract says this held even when the citations were random ([Ding et al. 2025](https://arxiv.org/abs/2501.01303)).
+
+Few readers open a pointer. In one month of English Wikipedia logs, 0.29% of page views included a click on a reference ([Piccardi, Redi, Colavizza and West 2020](https://arxiv.org/abs/2001.08614), read as the abstract). So a text with pointers looks checked to a reader who checks nothing, and a second reader has to look the pointers up before the text is shown.
 
 ## The `cold-read` reader, run the way the skill runs it
 

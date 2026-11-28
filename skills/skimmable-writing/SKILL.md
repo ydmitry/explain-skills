@@ -71,6 +71,8 @@ A hand-over, findings for a lead, a decision to sign off: the reader has only th
 
 When the text is a file, check it: `python3 ${CLAUDE_SKILL_DIR}/scripts/skim_check.py FILE --skim`. It prints what a skimming eye sees and lists paragraphs over 60 words, sections over 300, and sections with nothing in bold or too much of it. The check reads each line as one paragraph, so **write each paragraph on one line.**
 
+The limits of 60 words, 300 words and one thing in bold are house style, chosen so that a script can count them. Published studies support short and sparse; none tests these numbers.
+
 Fix what it lists, then read the skim view alone: if it does not tell the story, the headings and first sentences need rewriting.
 
 A line that starts `NOTE` is a count and not a problem. One counts a run of more than eight bullets: group them when they fall into kinds, else leave them.
