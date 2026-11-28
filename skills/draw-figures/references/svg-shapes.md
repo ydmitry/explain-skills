@@ -450,6 +450,35 @@ The form a reader expects for a whole in two to five parts. Each slice is a circ
 
 Put each part's number beside its name, in the order of the slices, and give each label the colour key of its slice (a small square of the same token) when the slices are more than two. More than five parts, or parts that must be compared with each other exactly, are bars.
 
+### Line of time (dates, and a span between them)
+
+One track for the whole period, on one scale: `x = start + month / months × TRACK`. What has passed or is fixed is a solid fill from the start. A span that matters (a notice period, a freeze, a grace period) is a hatched band between its two dates. The date the claim is about is one heavier line across the track, with its label under it in bold; every other date is a small tick with a plain label.
+
+```xml
+<!-- 24 months on a 320-wide track from x=40: month 12 at 200, month 18 at 280 -->
+<svg xmlns="http://www.w3.org/2000/svg" id="fig-1" viewBox="0 0 400 104" role="img"
+     aria-label="The contract runs for 24 months; either side may leave after month 12 with six months' notice, so it can end in month 18 at the earliest.">
+  <defs>
+    <pattern id="fig-1-hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <rect width="6" height="6" style="fill:var(--info-zone)"/>
+      <line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--info); stroke-width:2"/>
+    </pattern>
+  </defs>
+  <text x="40" y="22" font-size="13" style="fill:var(--muted-ink)">24 months</text>
+  <text x="240" y="22" font-size="13" text-anchor="middle">six months' notice</text>
+  <rect x="40" y="34" width="320" height="16" rx="3" style="fill:var(--bg); stroke:var(--muted-line)"/>
+  <rect x="40" y="34" width="160" height="16" rx="3" data-value="12" data-of="24" style="fill:var(--muted)"/>
+  <rect x="200" y="34" width="80" height="16" style="fill:url(#fig-1-hatch); stroke:var(--info-line)"/>
+  <line x1="200" y1="50" x2="200" y2="58" style="stroke:var(--muted); stroke-width:1.5"/>
+  <line x1="280" y1="28" x2="280" y2="58" data-value="18" style="stroke:var(--info); stroke-width:2.5"/>
+  <text x="200" y="74" font-size="13" text-anchor="middle" style="fill:var(--muted-ink)">month 12</text>
+  <text x="280" y="74" font-size="13" font-weight="700" text-anchor="middle" style="fill:var(--info-ink)">month 18
+    <tspan x="280" dy="17">earliest end</tspan></text>
+</svg>
+```
+
+Time runs left to right and the track starts at the first date, so the start needs no label. Put a date's label under its tick, a span's label above its band. Three or four dates fit; more are a table.
+
 ### Ring / arc gauge from one number
 
 One `<circle fill="none">` with `stroke-dasharray` set to `[shown, total]`. The dash math is the whole trick: the visible stroke length equals `pct × circumference`, so the model never reasons about angles or arc flags.

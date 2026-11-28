@@ -37,6 +37,7 @@ A mark that already stands in the text and fails a test is not drawn. Say so in 
 | one share of a whole | `filled track` |
 | a whole split into a few parts | `pie` |
 | steps that pass between several parts, in order | `swimlane` |
+| dates, and a span between them | `line of time` |
 | a limit that is crossed or held | `threshold meter` |
 | a change over time | `trend line` |
 | two versions that must agree | `paired diff` |
