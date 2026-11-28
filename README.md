@@ -85,13 +85,16 @@ A snapshot can hold private data. The folder is working material and is not mean
 It ships `scripts/check_sources.py`:
 
 - `brief` writes the reader's instructions: where the text and the sources are, the kept rows, and the numbers and dates of the text that stand in no source.
+- `shown` looks up every quote the text shows its reader, in quotation marks or a quoted block, and lists the ones no source holds letter for letter. It needs no reader.
 - `quotes` looks the reader's copied words up. A contradiction counts only when its words are really in the text and in a source, and the command exits 0 when none counts.
 
 A counted contradiction blocks. A statement with no source does not: the writer adds the source, marks the statement as a reading, or cuts it.
 
 ## cold-read
 
-**"Can you understand this?" is a question a patient reader always passes.** So fresh subagents read it, in the role of the least-informed person the text is for. A model cannot forget what it knows, so it reads like an expert from outside: where it gets stuck a person will too, and a pass proves little. The author's report to you says so in a line of its own.
+**"Can you understand this?" is a question a patient reader always passes.** So fresh subagents read it, in the role of the least-informed person the text is for. A model cannot forget what it knows, so it reads like an expert from outside: where it gets stuck a person will too, and a pass proves little.
+
+The author's report to you says so in a line of its own.
 
 One gets only the first screen and says what point it gives. A second reads the whole text and says its one point in two sentences, where it found it, and what it had to guess.
 

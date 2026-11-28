@@ -175,5 +175,63 @@ checked: 5 statements, contradicted: 1, no source: 0
         self.assertIn("WARNING", out)
 
 
+class Shown(Case):
+    """`shown`: the quotes a text shows its reader are looked up in the sources."""
+
+    def shown(self, text: str):
+        (self.work / "text.md").write_text(text)
+        return self.sh("shown", "text.md", "--source", "notes.md")
+
+    def test_a_quote_that_stands_in_a_source_passes(self):
+        code, out = self.shown('The notes say "the lock is held for about 9 s" and no more.\n')
+        self.assertEqual(code, 0, out)
+        self.assertEqual(out.strip().splitlines()[-1], "shown=1 found=1 near=0 not_found=0")
+
+    def test_a_quote_with_a_changed_word_is_near_and_blocks(self):
+        code, out = self.shown('Line one.\n\nThey wrote "The replay shows the lock is held for about 9 s".\n')
+        self.assertEqual(code, 1, out)
+        self.assertIn("NEAR line 3:", out)
+        self.assertIn("near=1", out)
+
+    def test_words_that_no_source_holds_are_not_found_and_block(self):
+        code, out = self.shown('They wrote "the database was down all night long".\n')
+        self.assertEqual(code, 1, out)
+        self.assertIn('NOT FOUND line 1: "the database was down all night long"', out)
+        self.assertIn("not_found=1", out)
+
+    def test_a_quote_cut_with_dots_is_found_when_each_piece_is(self):
+        code, out = self.shown('"The 504 errors cluster ... about 770 each" is what they saw.\n')
+        self.assertEqual(code, 0, out)
+
+    def test_a_capital_first_letter_and_a_last_full_stop_do_not_matter(self):
+        code, out = self.shown('- "The lock is held for about 9 s."\n')
+        self.assertEqual(code, 0, out)
+
+    def test_typographic_marks_are_read(self):
+        code, out = self.shown("They wrote \u201cthe cache was the cause\u201d first.\n")
+        self.assertEqual(code, 0, out)
+        self.assertIn("shown=1 found=1", out)
+
+    def test_a_quoted_block_is_one_quote(self):
+        code, out = self.shown("As the notes have it:\n\n> The fix shipped on 2026-03-14.\n> Total requests in the window: 14,214.\n")
+        self.assertEqual(code, 0, out)
+        self.assertIn("shown=1 found=1", out)
+
+    def test_under_four_words_and_code_are_not_looked_up(self):
+        code, out = self.shown('A "short one" and `some code of four words` here.\n\n```\n"a line of code in marks"\n```\n')
+        self.assertEqual(code, 0, out)
+        self.assertIn("shown=0", out)
+
+    def test_a_heading_of_the_text_in_marks_is_no_quote(self):
+        code, out = self.shown('# Note\n\nSee "What is still open here" below.\n\n## What is still open here\n\nNothing.\n')
+        self.assertEqual(code, 0, out)
+        self.assertIn("shown=0", out)
+
+    def test_a_text_with_no_quote_passes_and_says_so(self):
+        code, out = self.shown("Nothing is quoted here.\n")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(out.strip().splitlines()[-1], "shown=0 found=0 near=0 not_found=0")
+
+
 if __name__ == "__main__":
     unittest.main()

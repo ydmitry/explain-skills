@@ -11,6 +11,10 @@
            cannot be read.
     numbers TEXT [--sources FOLDER] [--source FILE ...]
            Only the numbers and dates of the text that stand in no source. Things to look at, not errors.
+    shown  TEXT [--sources FOLDER] [--source FILE ...]
+           The quotes the text shows its reader: words in double quotation marks or in a quoted block (`>`),
+           four words or more. Each is looked up in the sources letter for letter. NEAR: most of its words
+           stand there in one run, so it was retyped. NOT FOUND: no source holds it. Exit 1 when either is listed.
 
 FOLDER is a keep-sources folder (ledger.jsonl and snapshots/). FILE is anything else the text was written
 from: a transcript, notes, a diff, data.
@@ -323,6 +327,69 @@ def only_numbers(a) -> int:
     return 0
 
 
+def quoted(text: str) -> list:
+    """(line number, the words) of every quote a text shows: double quotation marks on a line, or a block of
+    `>` lines, with four words or more. Code blocks and code spans are not read: a command is not a quote. Nor is a heading
+    of the text itself, named in marks."""
+    out, fenced, block, start = [], False, [], 0
+    for i, line in enumerate(text.splitlines() + [""], 1):
+        if line.lstrip().startswith("```"):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        if line.lstrip().startswith(">"):
+            start = start or i
+            block.append(line.lstrip()[1:])
+            continue
+        if block:
+            out.append((start, norm(" ".join(block)).strip('"')))
+            block, start = [], 0
+        plain = norm(re.sub(r"`[^`]*`", " ", line))
+        out += [(i, m.group(1).strip()) for m in re.finditer(r'(?<!\w)"([^"]{8,600})"(?!\w)', plain)]
+    heads = {norm(re.sub(r"^\s*#{1,6}\s+", "", ln)).strip(" .") for ln in text.splitlines() if re.match(r"\s*#{1,6}\s", ln)}
+    return [(i, q) for i, q in out if len(q.split()) >= 4 and q.strip(" .") not in heads]
+
+
+def lookup(quote: str, source: str) -> str:
+    """`found`, `near` or `not found`, for a quote against the sources as one normalised text. A quote cut with
+    dots is found when each piece is; a capital first letter and punctuation at the ends do not matter."""
+    parts = [x.strip(" .,;:") for x in re.split(r"\[\s*(?:\.\.\.|…)\s*\]|\.\.\.+|…", quote)]
+    parts = [x for x in parts if len(x.split()) >= 2]
+
+    def stands(x: str) -> bool:
+        return x in source or x[:1].lower() + x[1:] in source or x[:1].upper() + x[1:] in source
+    if parts and all(stands(x) for x in parts):
+        return "found"
+    a, b = quote.lower().split(), source.lower().split()
+    best = 0
+    for start in range(len(a)):
+        if len(a) - start <= best:
+            break
+        for j in (k for k, w in enumerate(b) if w == a[start]):
+            n = 0
+            while start + n < len(a) and j + n < len(b) and a[start + n] == b[j + n]:
+                n += 1
+            best = max(best, n)
+    return "near" if a and best / len(a) >= 0.6 else "not found"
+
+
+def shown(a) -> int:
+    text = Path(a.text).expanduser().read_text(errors="replace")
+    files, _, _ = gather(a)
+    source = norm("\n".join(p.read_text(errors="replace") for p in files))
+    count = {"found": 0, "near": 0, "not found": 0}
+    for i, q in quoted(text):
+        got = lookup(q, source)
+        count[got] += 1
+        if got == "near":
+            print(f'NEAR line {i}: "{q}" | most of these words stand in a source, not all: copy the quote letter for letter')
+        elif got == "not found":
+            print(f'NOT FOUND line {i}: "{q}" | no source holds these words: quote the source, or drop the quotation marks if the words are yours')
+    print(f"shown={sum(count.values())} found={count['found']} near={count['near']} not_found={count['not found']}")
+    return 1 if count["near"] or count["not found"] else 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="command", required=True)
@@ -344,6 +411,9 @@ def main(argv=None) -> int:
     p = sub.add_parser("numbers")
     common(p)
     p.set_defaults(run=only_numbers)
+    p = sub.add_parser("shown")
+    common(p)
+    p.set_defaults(run=shown)
     a = ap.parse_args(argv)
     return a.run(a)
 
