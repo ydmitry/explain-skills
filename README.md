@@ -87,7 +87,7 @@ A counted contradiction blocks. A statement with no source does not: the writer 
 
 ## cold-read
 
-**"Can you understand this?" is a question a patient reader always passes.** So fresh subagents read it, in the role of the least-informed person the text is for.
+**"Can you understand this?" is a question a patient reader always passes.** So fresh subagents read it, in the role of the least-informed person the text is for. A model cannot forget what it knows, so it reads like an expert from outside: where it gets stuck a person will too, and a pass proves little.
 
 One gets only the first screen and says what point it gives. A second reads the whole text and says its one point in two sentences, where it found it, and what it had to guess.
 

@@ -47,6 +47,10 @@ A read blocks when any of these holds; every gap is otherwise minor:
 3. `guessed:` is not none.
 4. The document exists for a decision or an action, and `do:` is none.
 
+The reader is a model, and a model cannot forget what it knows: told to be a newcomer, it still reads like an expert
+from outside. So where it gets stuck, a person will too; where it does not, a person still may. A read that blocks
+is a finding, and a read that passes proves little.
+
 ## With a subagent tool
 
 0. Read last: make every other edit and check first. The read is of the text as it will be shown.

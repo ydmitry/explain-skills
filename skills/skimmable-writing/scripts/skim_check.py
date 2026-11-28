@@ -3,7 +3,7 @@
 
 Prints one line per problem and `problems=N`. Exit 0 when there are none.
 A line that starts NOTE is a count and not a problem: it says how many
-headings open with the same word.
+headings open with the same word, or how long a run of bullets is.
 --skim prints what a skimming eye sees: the headings, the bold text, each
 paragraph's first sentence and the first sentence of each bullet in a short
 list. Read that view alone: it should tell the story.
@@ -14,7 +14,7 @@ from collections import Counter
 
 MAX_PARA = 60      # words in one prose paragraph
 MAX_SECTION = 300  # words in one section
-MAX_BULLET_RUN = 8 # bullets in a row before the eye stops reading them
+MAX_BULLET_RUN = 8 # bullets in a row before the check asks whether they fall into kinds
 MAX_BOLD = 0.15    # share of a section's words in bold, labels not counted
 SAME_HEAD = 0.4    # share of the headings that open with one word before it is noted
 MIN_SAME_HEAD = 3  # and at least this many of them
@@ -66,7 +66,7 @@ def main() -> int:
     # a block of settings between two --- lines at the top is not text for a reader
     text = re.sub(r"\A---\n.*?\n---\n", "", text, count=1, flags=re.S)
     sections = split_sections(text)
-    problems, skim = [], []
+    problems, notes, skim = [], [], []
     same = same_opening([sec.split("\n")[0] for sec in sections if sec.startswith("#")])
     for sec in sections:
         lines = sec.split("\n")
@@ -90,7 +90,7 @@ def main() -> int:
                 run.append(line.strip())
                 continue
             if len(run) > MAX_BULLET_RUN:
-                problems.append(f"{name}: {len(run)} bullets in a row; group them under labels or use a table")
+                notes.append(f"{name}: {len(run)} bullets in a row; if they fall into kinds a reader would look for, group them under labels or use a table")
             else:
                 # the eye still reads a short list; of a long one it keeps only the bold words
                 for item in run:
@@ -110,6 +110,8 @@ def main() -> int:
         print()
     for p in problems:
         print("PROBLEM " + p)
+    for n in notes:
+        print("NOTE " + n)
     if same:
         print(f'NOTE {same[0]} of {same[1]} headings open with "{same[2]}"; let each open with what its section holds')
     print(f"problems={len(problems)}")

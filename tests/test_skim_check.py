@@ -35,6 +35,12 @@ class SkimCheck(unittest.TestCase):
         code, out = self.check("# Title\n\n**Nine things.**\n\n" + "".join(f"- item {i}\n" for i in range(9)))
         self.assertIn("9 bullets in a row", out)
 
+    def test_a_long_run_of_bullets_is_a_note_and_not_a_problem(self):
+        code, out = self.check("# Title\n\n**Nine things.**\n\n" + "".join(f"- item {i}\n" for i in range(9)))
+        self.assertEqual(code, 0)
+        self.assertIn("NOTE Title: 9 bullets in a row", out)
+        self.assertIn("problems=0", out)
+
     def test_settings_at_the_top_are_not_text(self):
         front = f"---\nname: a-skill\ndescription: {LONG}\n---\n\n"
         code, out = self.check(front + "# Title\n\nThe point comes first. **It holds.**\n")
