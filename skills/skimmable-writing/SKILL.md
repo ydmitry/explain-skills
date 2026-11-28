@@ -53,6 +53,7 @@ Names the reader will search for or type (a flag, a ticket, a commit, a file, a 
 - **A claim carries the check that showed it** and what the check returned.
 - **A fact from a file or a page carries a pointer to it,** where the fact is stated: a link, or the path with the line (`src/billing/retry.py:12`), copied from where you read it or from its `keep-sources` row. A reader who doubts the fact can then follow it.
 - **A fact the conclusion rests on shows its source's words:** a short quote, copied letter for letter, beside the pointer. A line of code, a clause of a contract, a sentence of a message: about 25 words at most, in quotation marks or as a quoted block. Quote only what you have open in front of you; a quote from memory is worse than none.
+- **A fact about what a screen showed carries the screenshot,** shown as an image where the fact is stated (`![what it shows](path/of/the/picture.png)`): a chart at a moment, a button that is greyed out, an error dialog. Use a picture you have as a file, and say under it what it shows, where it was taken and when. A picture that only looks related proves nothing and stays out.
 
 ## Short texts
 
