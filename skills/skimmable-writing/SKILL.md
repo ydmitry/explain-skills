@@ -52,6 +52,7 @@ Names the reader will search for or type (a flag, a ticket, a commit, a file, a 
 - **A number carries what it covers** where it is given: the period, the group, what was left out.
 - **A claim carries the check that showed it** and what the check returned.
 - **A fact from a file or a page carries a pointer to it,** where the fact is stated: a link, or the path with the line (`src/billing/retry.py:12`), copied from where you read it or from its `keep-sources` row. A reader who doubts the fact can then follow it.
+- **A fact the conclusion rests on shows its source's words:** a short quote, copied letter for letter, beside the pointer. A line of code, a clause of a contract, a sentence of a message: about 25 words at most, in quotation marks or as a quoted block. Quote only what you have open in front of you; a quote from memory is worse than none.
 
 ## Short texts
 
