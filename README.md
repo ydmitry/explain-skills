@@ -104,7 +104,7 @@ It has no script. A review asks whether the text is right; this asks whether a r
 
 ## draw-figures
 
-**A figure is for a claim whose structure is the point, and the text owns every word of it.** A line `Figure:` with one sentence marks the figure in the text. The two readers read that sentence with the rest, and it becomes the caption.
+**A figure is for a claim whose structure is the point, and the text owns every word of it.** A line `Figure:` with one sentence marks the figure in the text. The two readers read that sentence with the rest, and on the page it stands above the figure.
 
 The skill says which claims get a figure: there must be a second state to contrast, and the drawing must still argue the claim with its labels deleted. It names a shape for each kind of claim, and its references hold the drawing rules: geometry derived from constants, colour by meaning, and a catalog of shapes.
 

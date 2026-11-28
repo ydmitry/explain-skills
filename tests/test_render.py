@@ -102,10 +102,10 @@ class Render(Folder):
         self.assertIn("guard --strict a &lt; b", html)
         self.assertRegex(flat, r"<blockquote> ?<p>A header that fails is never registered\.</p> ?</blockquote>")
 
-    def test_the_figure_stands_inline_with_the_marks_sentence_as_its_caption(self):
+    def test_the_figure_stands_inline_with_the_marks_sentence_above_it(self):
         code, out, html = self.render()
         self.assertIn('id="fig-1"', html)
-        self.assertRegex(re.sub(r"\s+", " ", html), rf"</svg> ?</div> ?<figcaption>{re.escape(CLAIM)}</figcaption>")
+        self.assertRegex(re.sub(r"\s+", " ", html), rf"<figure> ?<figcaption>{re.escape(CLAIM)}</figcaption> ?<div class=\"fig\">")
         self.assertNotIn("Figure:", html)
         self.assertRegex(html, r"max-width:\s*320px")
         self.assertRegex(html, r"min-width:\s*256px")

@@ -31,7 +31,7 @@ When the renderer prints `ERROR line N`, it wrote no page. Fix that line of the 
 | On the page | Where it comes from |
 |---|---|
 | the title and the text | the Markdown, word for word |
-| each figure, with its caption | `fig-N.svg` and the mark's sentence |
+| each figure, with its claim above it | `fig-N.svg` and the mark's sentence |
 | a list of the sections | the `## ` headings |
 | a switch named Skim | dims everything but headings, bold text and first sentences |
 | a switch for a light or a dark screen | follows the system until the reader picks |

@@ -279,7 +279,7 @@ class Page:
         tag = re.sub(r"\s(?:width|height|style)=(\"[^\"]*\"|'[^']*')", "", root.group(0))
         tag = tag[:-1].rstrip() + f' style="max-width:{width:g}px;min-width:{width * SHRINK:g}px">'
         svg = svg[:root.start()] + tag + svg[root.end():]
-        return f'<figure>\n<div class="fig">{svg}</div>\n<figcaption>{self.inline(raw, line)}</figcaption>\n</figure>'
+        return f'<figure>\n<figcaption>{self.inline(raw, line)}</figcaption>\n<div class="fig">{svg}</div>\n</figure>'
 
     def picture(self, alt: str, src: str, line: int) -> str:
         if re.match(r"[a-zA-Z][\w+.-]*:", src):
