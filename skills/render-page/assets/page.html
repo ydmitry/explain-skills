@@ -20,6 +20,7 @@
   .toc::-webkit-scrollbar { display: none; }
   .toc a { flex: 0 0 auto; padding: 5px 10px; border-radius: 999px; font-size: 14px; line-height: 1.3;
            color: var(--text-dim); text-decoration: none; white-space: nowrap; }
+  .toc a { max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .toc a:hover { color: var(--text); }
   .toc a[aria-current="true"] { color: var(--accent); background: var(--info-zone); }
   .tools { flex: 0 0 auto; display: flex; gap: 6px; }
@@ -78,7 +79,7 @@
     .bar { position: sticky; top: 0; align-self: start; height: 100vh; flex-direction: column; align-items: stretch;
            padding: 30px 12px 20px 22px; border-bottom: 0; border-right: 1px solid var(--border); background: none; backdrop-filter: none; }
     .toc { flex-direction: column; overflow: hidden auto; gap: 2px; }
-    .toc a { white-space: normal; border-radius: 8px; padding: 6px 10px; }
+    .toc a { white-space: normal; max-width: none; border-radius: 8px; padding: 6px 10px; }
     .tools { flex-wrap: wrap; }
     main { margin: 0; padding-top: 44px; max-width: calc(var(--measure) + 36px); }
     html { scroll-padding-top: 24px; }

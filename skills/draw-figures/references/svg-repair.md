@@ -130,6 +130,9 @@ Gate 1.5 below; the catalog above matches them to a fix.
 | `brief-claim-differs` | Copy the mark's sentence into `claim:`; to change the claim, change the mark in the text first. |
 | `brief-incomplete` | Fill `shape:` with a name from the S3 table, and `data:` with every label, value and unit the figure shows (S2). |
 | `new-words`, `new-numbers` | Use the text's own word or number. One taken from a source the text points at goes on the brief's `data:` line, with its place in parentheses (S2). If the figure truly needs a word neither has, add it to the text. |
+| `value-mismatch` | The drawing and its number disagree. Recompute the length, the dash or the count from the number (S0, "A mark that draws a number carries the number"); never change the `data-value` to fit the drawing. |
+| `value-not-in-text` | A `data-value` or `data-of` holds a number that stands in neither the text nor the brief: write the text's number. |
+| `values-not-marked`, `value-no-track`, `value-scale-unclear` (WARN) | Put `data-value` on each mark that draws a number, draw the whole as a track under a share, and give bars on one scale one thickness (S0). |
 | `value-not-drawn` | Draw the value. If it will not fit, the layout is wrong (resize, re-band, split the figure); never drop it from `data:` (S2). |
 
 ---

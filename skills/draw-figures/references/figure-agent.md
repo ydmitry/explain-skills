@@ -85,6 +85,7 @@ WRITE
 - On the <svg>: xmlns, the literal attribute id="fig-N" (exactly the brief's id), a viewBox and no width/height, no class, role="img", and aria-label="<the claim>" alone, the claim word for word: the check compares it with the mark and with the brief.
 - Start every other id you write, <defs> and node ids alike, with the figure id (fig-2-arrow, fig-2-client), and every selector of the figure's one <style> with #fig-2 (#fig-2 .card { ... }): a page that shows the figures inline has ids of its own, and an h2 id="budget" collides with a node id="budget".
 - Colours and fonts are tokens only (svg-color.md): define no token and no @media in the file, and set a font only as var(--font-body) or var(--font-mono).
+- Every bar, ring or row of cells that draws a number carries it as data-value, with data-of for a share (svg-figures.md, "A mark that draws a number carries the number"): the check compares the drawing with the number.
 - Every figure with an arrowed edge carries the edge manifest <!-- edges: FROM.port → TO.port | … --> (svg-geometry.md §9), every name resolving to a node id, a data-name or exact label text.
 - The brief's data line is the list the check ticks: draw every item on it. Labels use the text's words and the brief's values, copied, never rounded, merged or invented. Every figure keeps the brief's palette and canvas width, meaning the same thing in each. Derive each height from its bands (svg-geometry.md §2, H last), at most the brief's ceiling; content that needs more is a refusal.
 

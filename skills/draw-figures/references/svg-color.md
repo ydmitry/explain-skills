@@ -113,12 +113,12 @@ Draw geometry with `class=` (or `fill="currentColor"`), and define what those cl
   <!-- label text uses an ink token (4.5:1 and more); the solid ok token is for the FILL only.
        Two hyphens in a row never stand inside a comment: the file stops being XML -->
   <rect class="track"  x="20" y="28" width="280" height="16" rx="8"/>
-  <rect class="before" x="20" y="28" width="168" height="16" rx="8"/>
+  <rect class="before" x="20" y="28" width="168" height="16" rx="8" data-value="60" data-of="100"/>
   <text class="lbl ink-mute" x="20" y="22">before · 60%</text>
 
   <!-- after: 95% of the same track -->
   <rect class="track" x="20" y="76" width="280" height="16" rx="8"/>
-  <rect class="after" x="20" y="76" width="266" height="16" rx="8"/>
+  <rect class="after" x="20" y="76" width="266" height="16" rx="8" data-value="95" data-of="100"/>
   <text class="lbl ink-ok" x="20" y="70">after · 95%</text>
 </svg>
 ```

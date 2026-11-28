@@ -142,6 +142,20 @@ Every word in it (`PASSES`, `REJECTED`, `name:`, `TODO`, `pass`, `fail`) stands 
 - **No `<script>`, no `<foreignObject>`, no gradient, no link to another file or a web address.** A figure shown as an image runs none of them, and the check refuses each.
 - **Valid XML.** The file is read alone, so `&` is `&amp;` and `<` is `&lt;` in a label, and every tag closes.
 
+### A mark that draws a number carries the number
+
+**Whatever encodes a value by its size says which value,** in an attribute the reader never sees. The check then compares the drawing with its numbers: a bar out of proportion is `value-mismatch`, and a number that stands in neither the text nor the brief is `value-not-in-text`.
+
+| The mark | Write | The check compares |
+|---|---|---|
+| bars on one scale | `data-value="620"` on each `<rect>`; all of one thickness, starting from zero | each length with its value, against the longest bar |
+| a limit across those bars | `data-value="500"` on the `<line>` | its distance from where the bars start |
+| a share of a whole | `data-value="350" data-of="500"` on the fill `<rect>`, drawn over a track that starts with it | the fill's length with the track's |
+| a ring filled to a share | `data-value="72" data-of="100"` on the `<circle>` with the `stroke-dasharray` | the dash with the full circle |
+| a row of cells | `data-value="9" data-of="12"` on the `<g>`, and `data-on=""` on each cell that counts | the number of cells, and of cells with `data-on` |
+
+Bars on a second, different scale in the same figure get `data-scale="name"`, the same name on each of them. A point on a line, a slope and an area carry no `data-value`: the check does not measure them, and the look at the picture does.
+
 ### The defining move
 
 What makes this more than a generic diagram:
@@ -217,8 +231,8 @@ A `shape: the Gap` brief renders as two states on a shared baseline, split by a 
     </marker>
   </defs>
   <line x1="360" y1="36" x2="360" y2="184" style="stroke:var(--muted-line)" stroke-dasharray="4 4"/><!-- the Gap -->
-  <rect x="130" y="98" width="70" height="72"  rx="4" style="fill:var(--muted)"/><!-- before: 60% -->
-  <rect x="520" y="56" width="70" height="114" rx="4" style="fill:var(--ok)"/><!-- after: 95% -->
+  <rect x="130" y="98" width="70" height="72"  rx="4" data-value="60" style="fill:var(--muted)"/><!-- before: 60% -->
+  <rect x="520" y="56" width="70" height="114" rx="4" data-value="95" style="fill:var(--ok)"/><!-- after: 95% -->
   <line x1="210" y1="92" x2="512" y2="60" style="stroke:var(--muted)" marker-end="url(#fig-2-rise)"/><!-- the movement -->
 </svg>
 ```

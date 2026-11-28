@@ -190,6 +190,88 @@ def view_box(root):
     return (nums[2], nums[3]) if len(nums) == 4 and None not in nums and nums[2] > 0 and nums[3] > 0 else None
 
 
+VALUE_SHAPES = ("n-of-m fill", "filled track", "threshold meter")   # shapes whose geometry is a number
+
+
+def value_findings(root, allowed_n, shape) -> list:
+    """Is each mark that carries its number as data-value drawn in proportion to it? (tier, type, detail)."""
+    out, bars, lines = [], {}, {}
+    near = lambda got, want, scale: abs(got - want) <= max(1.5, 0.03 * scale)
+    marked = [el for el in root.iter() if el.get("data-value") is not None]
+    rects = [el for el in root.iter() if local(el.tag) == "rect" and el.get("data-value") is None]
+    box = lambda el: tuple(number(el.get(k)) or 0.0 for k in ("x", "y", "width", "height"))
+    for el in marked:
+        tag, raw = local(el.tag), el.get("data-value")
+        v, whole = number(raw), number(el.get("data-of"))
+        if v is None or (el.get("data-of") is not None and not whole):
+            out.append(("PROBLEM", "value-mismatch", f'<{tag} data-value="{raw}">: data-value and data-of are numbers'))
+            continue
+        for shown in (raw, el.get("data-of")):
+            if shown is not None and not tokens(shown)[1] <= allowed_n:
+                out.append(("PROBLEM", "value-not-in-text", f'data-value or data-of "{shown}" stands in neither the text nor the brief'))
+        what = f'<{tag} data-value="{raw}"' + (f' data-of="{el.get("data-of")}">' if whole else ">")
+        if tag == "g":                                             # cells: one child shape for one of the whole
+            cells = [c for c in el if local(c.tag) in ("rect", "circle", "path", "use", "ellipse", "polygon")]
+            on = sum(c.get("data-on") is not None for c in cells)
+            if on != v or (whole and len(cells) != whole):
+                out.append(("PROBLEM", "value-mismatch", f"{what} holds {len(cells)} cell(s), {on} of them with data-on: "
+                            f"draw {raw} cell(s) with data-on" + (f" of {el.get('data-of')}" if whole else "")))
+        elif tag in ("circle", "ellipse", "path") and el.get("stroke-dasharray"):   # a ring filled to a share
+            dash = [number(d) for d in re.split(r"[\s,]+", el.get("stroke-dasharray").strip())]
+            total = number(el.get("pathLength")) or (dash[1] if len(dash) > 1 else None)
+            if whole and dash[0] is not None and total and abs(dash[0] / total - v / whole) > 0.02:
+                out.append(("PROBLEM", "value-mismatch", f"{what} is filled to {dash[0] / total:.0%} and its numbers say {v / whole:.0%}"))
+        elif tag == "rect" and whole:                              # a share against its track
+            x, y, w, h = box(el)
+            flat = [t for t in rects if abs(box(t)[1] - y) <= 0.5 and abs(box(t)[3] - h) <= 0.5 and abs(box(t)[0] - x) <= 0.5 and box(t)[2] > w]
+            tall = [t for t in rects if abs(box(t)[0] - x) <= 0.5 and abs(box(t)[2] - w) <= 0.5 and abs(box(t)[1] + box(t)[3] - y - h) <= 0.5 and box(t)[3] > h]
+            if flat or tall:
+                got, full = (w, max(box(t)[2] for t in flat)) if flat else (h, max(box(t)[3] for t in tall))
+                if not near(got, full * v / whole, full):
+                    out.append(("PROBLEM", "value-mismatch", f"{what} is {got:g} long on a track of {full:g}: {v:g} of {whole:g} is {full * v / whole:g}"))
+            else:
+                out.append(("WARN", "value-no-track", f"{what} has no track to be measured against: draw the whole as a rect "
+                            "that starts where the share starts, with the same thickness"))
+        elif tag == "rect":
+            bars.setdefault(el.get("data-scale", ""), []).append((v, box(el), what))
+        elif tag == "line":
+            lines.setdefault(el.get("data-scale", ""), []).append((v, tuple(number(el.get(k)) or 0.0 for k in ("x1", "y1", "x2", "y2")), what))
+    for scale in sorted(set(bars) | set(lines)):
+        group = bars.get(scale, [])
+        if not group:
+            continue
+        flat = all(abs(b[3] - group[0][1][3]) <= 0.5 for _, b, _ in group)
+        tall = all(abs(b[2] - group[0][1][2]) <= 0.5 for _, b, _ in group)
+        if len(group) > 1 and flat == tall:
+            out.append(("WARN", "value-scale-unclear", "the marks with data-value share neither a height nor a width, so their lengths "
+                        "cannot be compared: give bars on one scale one thickness, or a data-scale name of its own to each scale"))
+            continue
+        length = (lambda b: b[2]) if flat or not tall else (lambda b: b[3])
+        top_v, top_box, _ = max(group, key=lambda g: g[0])
+        if not top_v:
+            continue
+        per, longest = length(top_box) / top_v, length(top_box)
+        for v, b, what in group:
+            if not near(length(b), per * v, longest):
+                out.append(("PROBLEM", "value-mismatch", f"{what} is {length(b):g} long; on the scale of the bar for {top_v:g} "
+                            f"({longest:g} long) it is {per * v:g}"))
+        for v, (x1, y1, x2, y2), what in lines.get(scale, []):       # a limit: a line across the bars, at its value
+            if flat or not tall:
+                if abs(x1 - x2) > 0.5:
+                    continue
+                got = x1 - min(b[0] for _, b, _ in group)
+            else:
+                if abs(y1 - y2) > 0.5:
+                    continue
+                got = max(b[1] + b[3] for _, b, _ in group) - y1
+            if not near(got, per * v, longest):
+                out.append(("PROBLEM", "value-mismatch", f"{what} stands {got:g} from where the bars start; on their scale {v:g} is {per * v:g}"))
+    if not marked and shape in VALUE_SHAPES:
+        out.append(("WARN", "values-not-marked", f'the shape is "{shape}" and no mark carries its number: put data-value (and data-of '
+                    "for a share) on each bar, ring or group of cells, so the check can compare the drawing with its numbers"))
+    return out
+
+
 def source_findings(mark: dict, path: Path, text_tokens, block) -> list:
     """What the source of one figure file shows, as (tier, where, type, detail)."""
     fid, out = mark["id"], []
@@ -310,6 +392,8 @@ def source_findings(mark: dict, path: Path, text_tokens, block) -> list:
         problem("new-words", f"neither the text nor the brief has: {', '.join(sorted(words - allowed_w))}")
     if numbers - allowed_n:
         problem("new-numbers", f"neither the text nor the brief has: {', '.join(sorted(numbers - allowed_n))}")
+    for tier, kind, detail in value_findings(root, allowed_n, (block or {}).get("shape", "").strip().strip("`")):
+        out.append((tier, fid, kind, detail))
     return out
 
 

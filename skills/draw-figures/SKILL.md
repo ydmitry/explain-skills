@@ -83,13 +83,16 @@ In the brief, what stands in parentheses is the pointer to the place: it allows 
 - **One file for one figure:** `fig-N.svg`, for the Nth mark of the text.
 - **It names no colour.** Fills and strokes read tokens such as `var(--ok)` and `var(--text)`, so the figure follows a light and a dark screen. `place` writes the palette into the file.
 - **Its `aria-label` is the mark's sentence.** When you change the mark, change the label and the brief with it; the check compares the three.
+- **A mark that draws a number carries it:** `data-value="620"` on a bar, with `data-of` for a share of a whole. The check then compares the drawing with its numbers.
 - **Its ids and its style rules start with its own id,** so several figures can stand inline in one page.
 
 `place` leaves a file that shows correctly wherever a browser draws it: on GitHub, in an editor's preview, in a page. Where an image is needed, as in a chat message or an issue tracker, use the pictures that `preview` writes.
 
 ## What a clean check does not show
 
-`problems=0` means each mark has a figure with its sentence as the label, no colour is typed, no label holds a new word or number, and nothing measured collides or leaves the canvas. **It does not show that the figure argues its claim.** Only the look at the picture in step 6 does.
+`problems=0` means each mark has a figure with its sentence as the label, no colour is typed, no label holds a new word or number, every mark that carries its number is drawn in proportion to it, and nothing measured collides or leaves the canvas.
+
+**It does not show that the figure argues its claim.** Only the look at the picture in step 6 does.
 
 Without the `playwright` package the check measures nothing and says so. Then say in your report that the geometry was not measured.
 

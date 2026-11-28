@@ -404,7 +404,7 @@ if __name__ == "__main__":
 class ReferenceExamples(unittest.TestCase):
     """Every whole figure a reference shows passes the check it teaches."""
 
-    WORDS = {"new-words", "new-numbers", "value-not-drawn", "brief-incomplete"}  # an example has no text behind it
+    WORDS = {"new-words", "new-numbers", "value-not-drawn", "value-not-in-text", "brief-incomplete"}  # an example has no text behind it
 
     def test_every_whole_figure_in_the_references_passes_the_check(self):
         import xml.etree.ElementTree as ET
@@ -477,3 +477,66 @@ class TwoLabelsNearEachOther(Folder):
         self.draw(self.NEAR.replace('x="27" y="103"', 'x="24" y="103"'))
         code, out = run(F, "check", self.text)
         self.assertIn("WARN fig-1: split-label", out)
+
+
+class DrawnValues(Folder):
+    """A mark that carries its number as data-value is drawn in proportion to it."""
+
+    BARS = GOOD.replace('width="42" height="20" rx="4" style="fill:var(--error)"', 'width="42" height="20" rx="4" data-value="3" style="fill:var(--error)"') \
+               .replace('<rect x="184" y="40" width="112"', '<rect x="184" y="40" data-value="8" width="112"')
+
+    def kinds(self, out):
+        return [l.split(": ", 1)[1].split(" ")[0] for l in out.splitlines() if l.startswith(("PROBLEM", "WARN"))]
+
+    def test_bars_in_proportion_to_their_values_pass(self):
+        self.draw(self.BARS)
+        code, out = self.check()
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("value-", out)
+
+    def test_a_bar_out_of_proportion_is_a_problem(self):
+        self.draw(self.BARS.replace('width="42" height="20" rx="4" data-value="3"', 'width="70" height="20" rx="4" data-value="3"'))
+        code, out = self.check()
+        self.assertIn("PROBLEM fig-1: value-mismatch", out)
+        self.assertEqual(code, 1)
+
+    def test_a_share_is_measured_against_its_track(self):
+        share = self.BARS.replace('data-value="3"', 'data-value="3" data-of="8"').replace(' data-value="8"', "")
+        self.draw(share)
+        self.assertNotIn("value-", self.check()[1])
+        self.draw(share.replace('width="42" height="20" rx="4" data-value="3"', 'width="56" height="20" rx="4" data-value="3"'))
+        self.assertIn("PROBLEM fig-1: value-mismatch", self.check()[1])
+
+    def test_a_value_the_text_does_not_have_is_a_problem(self):
+        self.draw(self.BARS.replace('data-value="3"', 'data-value="5"'))
+        self.assertIn("PROBLEM fig-1: value-not-in-text", self.check()[1])
+
+    def test_a_ring_is_filled_to_its_share(self):
+        ring = '<circle cx="160" cy="100" r="10" fill="none" style="stroke:var(--ok)" data-value="3" data-of="8" stroke-dasharray="%s"/>\n</svg>'
+        self.draw(GOOD.replace("</svg>", ring % "37.5 100"))
+        self.assertNotIn("value-", self.check()[1])
+        self.draw(GOOD.replace("</svg>", ring % "50 100"))
+        self.assertIn("PROBLEM fig-1: value-mismatch", self.check()[1])
+
+    def test_cells_are_counted(self):
+        def cells(on):
+            row = "".join(f'<rect x="{24 + i * 10}" y="100" width="8" height="8"{" data-on=\"\"" if i < on else ""} style="fill:var(--ok)"/>' for i in range(8))
+            return GOOD.replace("</svg>", f'<g data-value="3" data-of="8">{row}</g>\n</svg>')
+        self.draw(cells(3))
+        self.assertNotIn("value-", self.check()[1])
+        self.draw(cells(4))
+        self.assertIn("PROBLEM fig-1: value-mismatch", self.check()[1])
+
+    def test_a_limit_line_stands_at_its_value(self):
+        line = '<line x1="%s" y1="30" x2="%s" y2="70" data-value="8" style="stroke:var(--muted)"/>\n</svg>'
+        one = self.BARS.replace(' data-value="8"', "")
+        self.draw(one.replace("</svg>", line % (136, 136)))
+        self.assertNotIn("value-", self.check()[1])
+        self.draw(one.replace("</svg>", line % (100, 100)))
+        self.assertIn("PROBLEM fig-1: value-mismatch", self.check()[1])
+
+    def test_a_shape_of_values_with_no_marked_value_is_a_warning(self):
+        self.draw(GOOD, BRIEF.replace("shape: the Gap", "shape: n-of-m fill"))
+        code, out = self.check()
+        self.assertIn("WARN fig-1: values-not-marked", out)
+        self.assertEqual(code, 0, out)

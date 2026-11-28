@@ -368,17 +368,17 @@ Tracks on **one scale** with the limit drawn across them as a rule: the claim is
   </defs>
   <text class="lbl" x="40" y="28">before · 620 ms</text>
   <rect class="track" x="40" y="36" width="320" height="14" rx="3"/>
-  <rect x="40" y="36" width="283.4" height="14" rx="3" style="fill:var(--error)"/>
+  <rect x="40" y="36" width="283.4" height="14" rx="3" data-value="620" style="fill:var(--error)"/>
   <text class="lbl" x="40" y="80">after · 410 ms</text>
   <rect class="track" x="40" y="88" width="320" height="14" rx="3"/>
-  <rect x="40" y="88" width="187.4" height="14" rx="3" style="fill:var(--ok)"/>
+  <rect x="40" y="88" width="187.4" height="14" rx="3" data-value="410" style="fill:var(--ok)"/>
   <!-- the limit: one rule through both tracks, its label under it -->
-  <line class="rule" x1="268.6" y1="30" x2="268.6" y2="110"/>
+  <line class="rule" x1="268.6" y1="30" x2="268.6" y2="110" data-value="500"/>
   <text class="lbl" x="268.6" y="128" text-anchor="middle" style="fill:var(--muted-ink)">limit 500 ms</text>
 </svg>
 ```
 
-The scale starts at zero (S8 §5: a cut baseline exaggerates the margin). With one value only, draw one track; with a limit that must be reached, not kept under, the tones swap and the geometry stays.
+Each bar and the rule carry their number as `data-value`, so the check compares the three lengths with the three numbers (S0). The scale starts at zero (S8 §5: a cut baseline exaggerates the margin). With one value only, draw one track; with a limit that must be reached, not kept under, the tones swap and the geometry stays.
 
 ### Filled track (a share of a whole)
 
@@ -390,7 +390,7 @@ One track for the whole and one fill for the share: `fill width = share / whole 
      aria-label="350 GB of the disk's 500 GB is used.">
   <text x="40" y="28" font-size="13">350 of 500 GB used</text>
   <rect x="40" y="38" width="320" height="16" rx="3" style="fill:var(--bg); stroke:var(--border)"/>
-  <rect x="40" y="38" width="224" height="16" rx="3" style="fill:var(--info)"/>
+  <rect x="40" y="38" width="224" height="16" rx="3" data-value="350" data-of="500" style="fill:var(--info)"/>
 </svg>
 ```
 
@@ -418,7 +418,7 @@ rotate(-90 cx cy)   // move the start from 3 o'clock to 12 o'clock
   <!-- value: 72% of C=326.73 → 235.24 shown. linecap="butt" so the visible arc
        length equals pct·C exactly — round caps would add stroke-width to the arc. -->
   <circle cx="60" cy="60" r="52" fill="none" style="stroke:var(--ok)" stroke-width="12"
-          stroke-linecap="butt" stroke-dasharray="235.24 326.73"
+          data-value="72" data-of="100" stroke-linecap="butt" stroke-dasharray="235.24 326.73"
           transform="rotate(-90 60 60)"/>
   <text x="60" y="60" text-anchor="middle" font-size="26" font-weight="700"
         style="fill:var(--text);font-variant-numeric:tabular-nums">72%<tspan
