@@ -13,6 +13,8 @@
 
 # Hand-drawn figures: one SVG for one claim
 
+Hand-drawn means placed by hand, every coordinate exact. It never means a sketchy line or a handwriting font: both make a figure harder to read accurately and less believed.
+
 ## S3 · The vocabulary: named shapes with honesty filters
 
 Pick the figure from a finite catalog instead of inventing geometry per claim. Every entry carries an **epistemic precondition** (the claim it can honestly hold) and an **anti-prescription** (the misuse that makes it lie), so choosing the shape *is* the first honesty gate. Start from the question the claim answers; the family routes you to the shapes.

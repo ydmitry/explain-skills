@@ -46,9 +46,11 @@ Carry the literal question into the look at each preview as a subtractive clause
 
 When a value must be *read* off the figure, the visual channel you pick determines how accurately a human decodes it. Ordered most-accurate to least:
 
-> **position > length > angle > area > color**
+> **position > length or angle > area > color**
 
-The actionable consequence for concept-viz: **bars (position/length) > pie (angle) > bubble (area)** for the same comparison. Prefer a bar or a dot-on-a-shared-baseline over a pie or a cloud of circles whenever the reader is meant to compare magnitudes. Reserve area and color for *secondary* or categorical encodings, never the primary quantitative read.
+Position on a shared scale is read best and area worst. A repeat of the original experiment found angle no worse than length.
+
+The actionable consequence for concept-viz: **bars on a shared baseline (position) > pie (angle) > bubble (area)** for the same comparison. Prefer a bar or a dot-on-a-shared-baseline over a pie or a cloud of circles whenever the reader is meant to compare magnitudes. Reserve area and color for *secondary* or categorical encodings, never the primary quantitative read.
 
 **If size must carry a value, scale by AREA, not radius.** The eye reads a disk's area; setting `r ∝ value` makes a 4× value look ~16× bigger — a silent lie. Use `r ∝ √value`:
 
@@ -162,7 +164,7 @@ The bans for figures (no gradient; no violet, fuchsia or indigo in any slot; fon
 
 A figure reads the tokens, so it cannot pick a ground, a typeface or a hue of its own: the loud tells are closed off. What is left is layout and shape, and three defaults that feel tasteful and say nothing:
 
-- **Everything centred.** Every label `text-anchor="middle"`, every block on the middle axis. Centring is a default, not a decision. Left-align, or go asymmetric, unless the symmetry encodes something (a genuine before/after mirror does: see the S0 divider).
+- **Everything centred.** Every label `text-anchor="middle"`, every block on the middle axis. Centring everything is a default, not a decision. Keep symmetry where two parts are parallel (a before and an after, two options): it marks them as a pair, and readers like it. Left-align, or go asymmetric, where centring would hide a difference.
 - **One `rx` on every rect.** The same radius on every card, pill and frame flattens the hierarchy. Vary it or drop it: sharp corners for a fixed frame, soft for a state pill, and let the difference *mean* something.
 - **A row of equal boxes joined by arrows,** whatever the claim. When the boxes could be swapped without changing the picture, the shape is carrying nothing (S3: pick the shape from the claim).
 

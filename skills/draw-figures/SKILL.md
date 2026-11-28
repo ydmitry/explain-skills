@@ -44,6 +44,8 @@ A mark that already stands in the text and fails a test is not drawn. Say so in 
 
 A claim that fits none of these and still passes both tests is a `one-off metaphor`. Rows and columns of values are a table, never a figure. One figure carries one claim: three claims are three figures.
 
+An arrow is drawn only for a sequence, a cause or a movement. A reader takes an arrow to mean that something acts or flows, so the parts of a thing and two things compared get none.
+
 ## The mark
 
 Where the figure goes, write one line as a paragraph of its own:
@@ -98,6 +100,8 @@ Without the `playwright` package the check measures nothing and says so. Then sa
 ## A graph in a text that stays Markdown
 
 **A graph of boxes and arrows can go into the text as a `mermaid` block,** when the text will be read as Markdown and speed matters more than looks. GitHub and most editors draw it. It needs no mark, no file and no check.
+
+Boxes and arrows fit a flow or a sequence. For a comparison or a quantity they are the wrong form: mark a figure, or write a table.
 
 Keep it under about fifteen nodes, take every label from the text, and set no colours. `render-page` refuses such a block: a page shows drawn figures only.
 
